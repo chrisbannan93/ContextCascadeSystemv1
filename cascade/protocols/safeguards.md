@@ -19,3 +19,4 @@ This policy outlines mandatory checks before and after WRITE. Violations must be
 ### Maintenance Guidance
 - Keep safeguard IDs stable for audit scripts.
 - Align new safeguards with thresholds in `file_lifespans.md`.
+ - Review this policy whenever new domains or file types are introduced.

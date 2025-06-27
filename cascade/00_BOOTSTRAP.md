@@ -1,7 +1,8 @@
 <!-- @meta {
   "fileType": "immutable",
   "purpose": "Bootstrap file enforcing protocol startup, scope discipline, and memory system entry constraints.",
-  "editPolicy": "readonly"
+  "editPolicy": "readonly",
+  "routeScope": "global"
 } -->
 # ContextCascade Bootstrap Guide
 Welcome. This file is the required entrypoint for using the ContextCascade memory system. Before any task, you must:

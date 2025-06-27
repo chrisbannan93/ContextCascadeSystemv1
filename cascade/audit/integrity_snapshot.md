@@ -9,3 +9,6 @@ This file stores the reference hashes used to verify critical files. Append a ne
 
 | File Path | SHA-256 Hash | Recorded At |
 |-----------|--------------|-------------|
+| _(example)_ `/cascade/system_manifest.md` | `2c6c2c50d63f78fce4a...` | `2025-06-25T00:00Z` |
+
+Add a new row whenever an immutable or protected file is first written or legitimately updated. Do **not** modify existing entries—this table is an append-only audit trail used for hash verification during every loop.

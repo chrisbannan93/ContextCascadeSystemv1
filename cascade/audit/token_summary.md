@@ -10,3 +10,6 @@ Use this table to track token estimates for context planning. Update values afte
 
 | Path | Token Estimate |
 |------|---------------|
+| `(example)` `domains/client/index.md` | `3864` |
+
+Recalculate estimates periodically using the validator or manual counting tools. Accurate values help build efficient load plans and prevent token overflow during READ cycles.
