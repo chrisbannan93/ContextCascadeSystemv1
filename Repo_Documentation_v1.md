@@ -1,3 +1,9 @@
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Comprehensive developer and user guide for operating the ContextCascade system.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global"
+} -->
 # ContextCascade Developer & User Documentation
 *A comprehensive guide for developers and AI assistants to correctly load, use, update, and maintain a ContextCascade system.*
 

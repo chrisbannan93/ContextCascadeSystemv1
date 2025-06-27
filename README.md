@@ -1,3 +1,9 @@
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "High-level overview and quickstart reference for the ContextCascade repository.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global"
+} -->
 # Context Cascade
 
 ## 🚀 Overview
