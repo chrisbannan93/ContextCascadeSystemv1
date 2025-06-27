@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "protocol",
+  "fileType": "permanent",
   "subtype": "recoveryPlan",
   "purpose": "Steps to restore cascade state after safeguard failure or drift.",
   "editPolicy": "appendOrReplace",
