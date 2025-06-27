@@ -22,3 +22,4 @@
 - Keep rows alphabetised for quick diff checks.
 - Append a new row only after the corresponding domain directory exists.
 - Manifest lists memory domains only; do not reference application repositories.
+- After editing this file, update `audit/integrity_snapshot.md` with the new hash to keep integrity checks valid.

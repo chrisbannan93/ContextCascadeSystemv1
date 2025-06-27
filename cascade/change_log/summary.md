@@ -9,3 +9,6 @@ This archive receives flushed entries from `recent.md` and grows indefinitely. N
 
 | Loop | Timestamp (UTC) | Summary |
 |------|-----------------|---------|
+| `(example)` `41` | `2025-06-24T11:50Z` | `Initial cascade bootstrap` |
+
+This file is append-only. It serves as the authoritative history of completed jobs after entries roll off `recent.md`. Do not edit or reorder past rows.

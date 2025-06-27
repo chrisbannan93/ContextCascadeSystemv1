@@ -11,3 +11,5 @@ writeGates:
   - allow: "domains/*/index.md"
   - deny: "audit/**"
 ```
+
+Update this file with caution; changes affect which paths the AI may modify. Any edits should be paired with a security review entry.

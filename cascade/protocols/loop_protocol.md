@@ -11,3 +11,5 @@
 3. **WRITE** – Re-validate hashes, execute the plan, update logs and counters.
 <!-- END PROTECTED -->
 Use this protocol verbatim. Any modifications require a security review.
+
+After each WRITE completes, the system appends a new row to `checkpoints/loop_checkpoint.md`. If any safeguard fails, `recovery.md` describes the fallback procedure.

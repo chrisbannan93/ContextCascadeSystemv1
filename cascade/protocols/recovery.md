@@ -13,3 +13,5 @@ Trigger this plan if `drift_flag.md` exists or WRITE fails. It freezes writes, v
 2. **Contain** – Move suspect files to `/quarantine/` and set `drift_flag.md` with a short note.
 3. **Restore** – Replace corrupted files from `integrity_snapshot.md` and generate a minimal load plan.
 4. **Resume** – Clear the edit lock and `drift_flag.md` only after a clean READ → ACT → WRITE cycle.
+
+Document each action taken during recovery in `audit/meta_audit.md` for historical reference.

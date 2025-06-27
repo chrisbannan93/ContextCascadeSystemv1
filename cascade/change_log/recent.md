@@ -12,3 +12,6 @@ Holds the last seven loop results. Oldest entries are merged into `summary.md` w
 
 | Loop | Timestamp (UTC) | Summary |
 |------|-----------------|---------|
+| `(example)` `42` | `2025-06-25T12:01Z` | `Updated client/index.md` |
+
+When more than seven entries exist, the oldest is copied to `summary.md` and removed here. Never edit existing rows except through the automated merge process.
