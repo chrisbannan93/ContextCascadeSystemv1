@@ -1,14 +1,35 @@
 <!-- @meta {
   "fileType": "append-only",
-  "purpose": "Permanent ledger of all completed jobs and merge results.",
+  "subtype": "archive",
+  "purpose": "Permanent ledger of every WRITE-cycle summary merged from change_log/recent.md.",
   "editPolicy": "appendOnly",
   "routeScope": "global"
 } -->
-# Change Log Summary
-This archive receives flushed entries from `recent.md` and grows indefinitely. Never modify existing rows.
 
-| Loop | Timestamp (UTC) | Summary |
-|------|-----------------|---------|
-| `(example)` `41` | `2025-06-24T11:50Z` | `Initial cascade bootstrap` |
+### /cascade/change_log/summary.md
 
-This file is append-only. It serves as the authoritative history of completed jobs after entries roll off `recent.md`. Do not edit or reorder past rows.
+> **Role:** Immutable audit trail of *all* past WRITE-phase loop summaries.  
+> Rows arrive here from `/cascade/change_log/recent.md` whenever that buffer overflows (`maxEntries` = 7) or a manual/threshold merge is triggered.
+
+---
+
+#### Historical Loop Activity  
+*(chronological — oldest at top, newest appended last)*
+
+| Cycle | Timestamp (UTC)        | Summary / Files Written                           | Job ID |
+|------:|------------------------|---------------------------------------------------|:------:|
+| —     | —                      | _Archive initialised_                             |  —     |
+
+---
+
+#### Integrity & Audit Rules
+
+* **Append-only:** any attempt to edit or delete existing rows triggers `/lifecycle/drift_flag.md` and logs a violation in `/audit/meta_audit.md`.  
+* **Timestamp format:** ISO-8601 UTC (`YYYY-MM-DD HH:MM:SSZ`).  
+* **Validator checks:** monotonic cycle numbers and non-decreasing timestamps.  
+* **External archival:** if older segments are exported, leave a stub row noting the export range and destination.
+
+---
+
+**Summary:**  
+`summary.md` guarantees full provenance for every WRITE cycle, supporting forensic review, compliance checks, and rollback analysis. Keep it immutable and consistently formatted.
