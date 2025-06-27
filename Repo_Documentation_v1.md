@@ -1240,7 +1240,7 @@ Proceed to `/cascade/index.md`.
 | `/cascade/protocols/file_lifespans.md` | Refresh thresholds (by domain) |
 | `/cascade/change_log/recent.md` | Rolling buffer (max 7) |
 | `/cascade/change_log/summary.md` | Permanent history ledger |
-| `/cascade/lifecycle/global.md` | Tick counter (global WRITE count) |
+| `/cascade/lifecycle/counter.md` | Tick counter (global WRITE count) |
 | `/cascade/lifecycle/*.md` | Domain write counters |
 | `/cascade/load_plans/` | AI‑generated read plans (evictable) |
 | `/cascade/job_logs/temp_job.md` | Temporary WRITE plan (1‑cycle TTL) |
