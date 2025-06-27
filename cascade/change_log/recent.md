@@ -1,17 +1,56 @@
 <!-- @meta {
   "fileType": "rolling",
-  "maxEntries": 7,
-  "evictionPolicy": "FIFO",
-  "purpose": "Short window log of recent WRITE operations.",
+  "subtype": "buffer",
+  "purpose": "Stores the last 7 WRITE-cycle summaries before they are merged into the permanent change log.",
   "editPolicy": "appendOnly",
+  "maxEntries": 7,
   "routeScope": "global",
-  "mergeTarget": "change_log/summary.md"
+  "mergeTarget": "change_log/summary.md",
+  "mergePolicy": "append"
 } -->
-# Recent Change Log
-Holds the last seven loop results. Oldest entries are merged into `summary.md` when the limit is exceeded.
 
-| Loop | Timestamp (UTC) | Summary |
-|------|-----------------|---------|
-| `(example)` `42` | `2025-06-25T12:01Z` | `Updated client/index.md` |
+### /cascade/change_log/recent.md
 
-When more than seven entries exist, the oldest is copied to `summary.md` and removed here. Never edit existing rows except through the automated merge process.
+> **Role:** Lightweight window into the most-recent WRITE cycles.  
+> When `maxEntries` (7) is exceeded, the oldest row is copied to `summary.md` and evicted here.
+
+---
+
+#### Recent Loop Activity (max 7)
+
+| Cycle | Timestamp (UTC)      | Summary of Actions / Files Written                  | Job ID |
+|:----:|----------------------|------------------------------------------------------|:-----:|
+| —    | —                    | _File initialised_                                   | —     |
+
+_Newest entries are appended **on top** (reverse-chronological)._
+
+---
+
+#### Retention & Merge Rules
+
+1. **Overflow Handling**  
+   - Append new row → if total > 7 rows →  
+     1. Copy oldest row to `/cascade/change_log/summary.md`  
+     2. Remove that row from `recent.md`
+
+2. **Trigger Points**  
+   - Automatic overflow (rule above)  
+   - `forceMerge: true` in a job plan  
+   - Global `merge_threshold` event from `/protocols/file_lifespans.md`
+
+3. **Enforcement**  
+   - Executed by `WRITE(handle_merge_phase)`  
+   - Success logged to `/audit/meta_audit.md`; failure raises `/lifecycle/drift_flag.md`
+
+---
+
+#### Maintenance Guidelines
+
+- **Do not** modify existing rows; only append.  
+- Use **ISO-8601 UTC** timestamps for validator compatibility.  
+- Keep descriptions concise—spillover detail belongs in the job plan or archive.
+
+---
+
+**Summary:**  
+`recent.md` offers fast visibility for debugging without loading the full archive, while automatic roll-ups keep the buffer lean and cascade-safe.
