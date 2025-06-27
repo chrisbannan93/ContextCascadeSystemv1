@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "index",
+  "fileType": "structural",
   "subtype": "domainIndex",
   "purpose": "Manifest for the schema domain—maps contracts, validation traces, and WIP drafts to lifecycle hygiene.",
   "editPolicy": "appendOrReplace",

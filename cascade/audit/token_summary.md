@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "audit",
+  "fileType": "evictable",
   "subtype": "tokenLedger",
   "purpose": "Single-loop snapshot of token usage by domain and phase; drives pruning, merge, and load-plan optimisation.",
   "editPolicy": "appendOrReplace",

@@ -37,7 +37,15 @@ interface ValidationReport {
 
 const REQUIRED_FIELDS = ["fileType", "editPolicy"] as const;
 const ALLOWED_FILE_TYPES = new Set([
-  "policy", "counter", "rolling", "archive", "audit", "index", "job", "flag", "lock", "checkpoint", "tokenLedger", "writeGate", "temporary", "immutable"
+  "permanent",
+  "immutable",
+  "rolling",
+  "append-only",
+  "temporary",
+  "counter",
+  "evictable",
+  "protected",
+  "structural"
 ]);
 
 const ALLOWED_EDIT_POLICIES = new Set([

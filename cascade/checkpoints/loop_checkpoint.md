@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "checkpoint",
+  "fileType": "append-only",
   "subtype": "loopBoundary",
   "purpose": "Marks validated WRITE-phase loop completions for traceability and state-lock verification.",
   "editPolicy": "appendOnly",

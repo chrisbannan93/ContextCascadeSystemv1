@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "lock",
+  "fileType": "temporary",
   "subtype": "editSession",
   "purpose": "Prevents concurrent WRITE operations by signalling an active edit session.",
   "editPolicy": "replaceOnly",         // file is overwritten—not appended—each loop
