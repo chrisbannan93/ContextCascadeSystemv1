@@ -10,7 +10,7 @@
 ### /cascade/security/write_gates.md
 
 > **Role:** A WRITE-time firewall.  
-> Every planned file mutation is checked against these rules by `validate_write_gates.ts`.  
+> Every planned file mutation is checked against these rules by the write gate validator.
 > The first matching rule wins (`allow` > `deny`).
 
 ---
