@@ -1,0 +1,48 @@
+<!-- @meta {
+  "fileType": "lock",
+  "subtype": "editSession",
+  "purpose": "Prevents concurrent WRITE operations by signalling an active edit session.",
+  "editPolicy": "replaceOnly",         // file is overwritten—not appended—each loop
+  "routeScope": "global",
+  "ttlCycles": 1,                      // auto-expires after next loop
+  "linkedAudits": ["audit/meta_audit.md", "lifecycle/drift_flag.md"]
+} -->
+
+### /_locks/active_edit.md
+
+> **Role:** Acts as a mutex for high-integrity WRITE phases.  
+> If this lock is present and `status` ≠ `cleared`, any new job plan must halt until the lock is released or deemed **stale**.
+
+---
+
+#### Current Lock (state is overwritten every loop)
+
+| Timestamp (UTC)       | Locked By | Scope   | Job ID  | Status       |
+|-----------------------|-----------|---------|---------|--------------|
+| _none_                | —         | —       | —       | cleared      |
+
+**Status values**
+
+| Value        | Meaning                                                    |
+|--------------|------------------------------------------------------------|
+| `in-progress`| WRITE or MERGE currently running                           |
+| `failed`     | Job aborted; manual review needed before clearing          |
+| `stale`      | TTL elapsed without matching Job ID; safe-to-clear flag    |
+| `cleared`    | No active lock; safe to initiate new WRITE session         |
+
+---
+
+#### Lock Workflow
+
+1. **WRITE-start** → loop controller writes lock entry (`in-progress`).  
+2. **WRITE-end**   → controller updates `status: cleared` *or* `failed`.  
+3. **Next loop**   → if `status` ≠ `cleared`, ACT halts planning, logs issue:  
+   - `/lifecycle/drift_flag.md` (flag)  
+   - `/audit/meta_audit.md`  (audit row)  
+
+If `status` becomes `stale`, a maintenance job can replace this file with the placeholder **cleared** row above.
+
+---
+
+**Summary**  
+`active_edit.md` enforces sequential state commits, protecting the cascade from race-condition corruption. Keep it overwrite-only and ensure every WRITE phase ends with a `cleared` status—or a flagged audit trail if problems arise.
