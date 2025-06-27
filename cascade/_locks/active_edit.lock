@@ -2,9 +2,9 @@
   "fileType": "temporary",
   "subtype": "editSession",
   "purpose": "Prevents concurrent WRITE operations by signalling an active edit session.",
-  "editPolicy": "replaceOnly",         // file is overwritten—not appended—each loop
+  "editPolicy": "replaceOnly",         
   "routeScope": "global",
-  "ttlCycles": 1,                      // auto-expires after next loop
+  "ttlCycles": 1,                      
   "linkedAudits": ["audit/meta_audit.md", "lifecycle/drift_flag.md"]
 } -->
 
