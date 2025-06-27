@@ -1,15 +1,38 @@
 <!-- @meta {
-  "fileType": "protected",
-  "purpose": "Glob patterns defining allowed and denied write paths.",
+  "fileType": "policy",
+  "subtype": "writeGate",
+  "purpose": "Path-level allow/deny rules enforced before every WRITE commit.",
   "editPolicy": "appendOrReplace",
-  "routeScope": "global"
+  "routeScope": "global",
+  "linkedAudits": ["security/security_review.md", "audit/meta_audit.md"]
 } -->
-# Write Gates
-YAML formatted rules controlling which files may be modified. Example:
+
+### /cascade/security/write_gates.md
+
+> **Role:** A WRITE-time firewall.  
+> Every planned file mutation is checked against these rules by `validate_write_gates.ts`.  
+> The first matching rule wins (`allow` > `deny`).
+
+---
+
+#### Gate Rules
+
 ```yaml
 writeGates:
-  - allow: "domains/*/index.md"
-  - deny: "audit/**"
-```
+  # ---------- ALLOW ----------
+  - allow: "job_logs/**"                  # temp_job, recent, summary
+  - allow: "change_log/**"
+  - allow: "lifecycle/**/*.md"
+  - allow: "security/security_review.md"  # append-only audit rows
+  - allow: "security/write_gates.md"      # self-updates via job plan
+  - allow: "audit/**"                     # meta_audit, integrity snapshots
+  - allow: "drafts/**"                    # developer scratch docs
+  - allow: "temp_notes/**"
 
-Update this file with caution; changes affect which paths the AI may modify. Any edits should be paired with a security review entry.
+  # ---------- DENY ----------
+  - deny: "system_manifest.md"            # immutable doctrine
+  - deny: "protocols/loop_protocol.md"    # core loop logic
+  - deny: "protocols/file_lifespans.md"   # threshold policy – needs review flag
+  - deny: "immutable/**"                  # any immutable subtree
+  - deny: "_locks/**"                     # lockfile integrity
+  - deny: "external/**"                   # integration adapters
