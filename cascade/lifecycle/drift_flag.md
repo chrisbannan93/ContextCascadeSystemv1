@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "flag",
+  "fileType": "append-only",
   "purpose": "Lifecycle drift indicator — logs protocol inconsistencies or skipped hygiene actions.",
   "editPolicy": "appendOnly",
   "routeScope": "global",
