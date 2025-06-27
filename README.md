@@ -131,7 +131,7 @@ These types govern lifecycle behaviors, memory management, and operational rules
 ## 🔗 Contributions and Extensions
 
 - New file types, domains, or lifecycle counters follow a strict extension pattern workflow, involving validation, approval, and secure implementation.
-- Contributions must pass rigorous metadata validation (`validators/metadata_validator.ts`).
+- Contributions must pass rigorous metadata validation (`validators/metadata_validator.md`).
 
 ---
 
