@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "index",
+  "fileType": "structural",
   "subtype": "featureMap",
   "purpose": "Authoritative catalogue of ContextCascade first-class features, mapping each to its governing file(s) and enforcement phase.",
   "editPolicy": "appendOrReplace",

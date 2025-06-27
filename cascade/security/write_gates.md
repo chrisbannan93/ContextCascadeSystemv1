@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
+  "fileType": "protected",
   "subtype": "writeGate",
   "purpose": "Path-level allow/deny rules enforced before every WRITE commit.",
   "editPolicy": "appendOrReplace",

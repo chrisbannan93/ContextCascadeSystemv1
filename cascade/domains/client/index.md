@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "index",
+  "fileType": "structural",
   "subtype": "domainIndex",
   "purpose": "Manifest for the client domain. Routes all UI memory, ephemeral state, and cascade hygiene targets.",
   "editPolicy": "appendOrReplace",

@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "audit",
+  "fileType": "append-only",
   "subtype": "review",
   "purpose": "Append-only ledger of all security reviews triggered by gate violations, hash mismatches, or high-risk WRITE events.",
   "editPolicy": "appendOnly",

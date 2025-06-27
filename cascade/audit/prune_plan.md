@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
+  "fileType": "evictable",
   "subtype": "prunePlan",
   "purpose": "Rule-set that schedules deletion, archival, or merge of short-lived files once lifecycle thresholds are met.",
   "editPolicy": "appendOrReplace",

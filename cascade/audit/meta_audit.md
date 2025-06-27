@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "audit",
+  "fileType": "append-only",
   "subtype": "integrityLog",
   "purpose": "System-wide log of loop-phase violations, integrity gaps, or protocol mismatches.",
   "editPolicy": "appendOnly",

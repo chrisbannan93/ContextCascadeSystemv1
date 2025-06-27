@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "index",
+  "fileType": "structural",
   "subtype": "domainIndex",
   "purpose": "Manifest for the server domain. Lists backend memory files and defines load / hygiene behaviour.",
   "editPolicy": "appendOrReplace",

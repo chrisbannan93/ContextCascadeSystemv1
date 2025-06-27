@@ -18,6 +18,8 @@
 | `/cascade/lifecycle/*.md` | Domain write counters |
 | `/cascade/load_plans/` | AI‑generated read plans (evictable) |
 | `/cascade/job_logs/temp_job.md` | Temporary WRITE plan (1‑cycle TTL) |
+| `/cascade/job_logs/recent.md` | Rolling buffer of job plan summaries |
+| `/cascade/job_logs/summary.md` | Permanent job plan history |
 
 ---
 ## Notes

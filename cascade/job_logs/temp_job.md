@@ -1,6 +1,6 @@
 <!-- @meta {
-  "fileType": "job",
-  "subtype": "temporary",
+  "fileType": "temporary",
+  "subtype": "job_plan",
   "purpose": "Ephemeral WRITE-phase job plan; exists for one loop to coordinate file mutations and safety checks.",
   "editPolicy": "appendOrReplace",
   "ttlCycles": 1,
