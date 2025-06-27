@@ -192,7 +192,7 @@ The list below enumerates **every first‑class feature** in ContextCascade. Sub
 #### 2.5.1 **Metadata Blocks**
 **What**: Structured JSON-in-comment headers located at the very top of each file. These blocks define operational context for how the system should treat each file.
 **Why**: They encode critical attributes such as file behavior (`fileType`), editing permissions (`editPolicy`), expiration (`ttlCycles`), routing scope (`routeScope`), and merge strategies. These enable the cascade to interpret, enforce, and automate behavior during each READ → ACT → WRITE cycle.
-**Where**: Present in all `.md` files in the cascade structure. Parsing and validation are handled by the `metadata_validator.ts` and invoked at the start of every READ phase.
+**Where**: Present in all `.md` files in the cascade structure. Parsing and validation are handled by `validators/metadata_validator.md` and invoked at the start of every READ phase.
 **How**: The metadata block is parsed before any content reasoning begins. Fields like `fileType`, `editPolicy`, `ttlCycles`, and `routeScope` inform downstream logic including whether the file is writable, when it should be pruned, if it needs to be re-read, or which load plan it belongs to.
 **Example Use Case**: A file `load_plans/auto_plan_client.md` might declare:
 <!-- @meta
@@ -208,7 +208,7 @@ This tells the system it’s a short-lived plan that will expire in 3 cycles, be
 #### 2.5.2 **Canonical FileType Registry** 
 **What**: A formally defined registry containing nine allowed file types and their permissible aliases. These types include `permanent`, `immutable`, `rolling`, `append-only`, `temporary`, `counter`, `evictable`, `protected`, and `structural`.
 **Why**: Guarantees consistent interpretation of file semantics across all cascade operations. Each `fileType` carries rules around edit behavior, lifecycle duration, eviction policy, and participation in routing or merges.
-**Where**: Defined in §3.2.1 of the documentation and enforced by `metadata_validator.ts`. The validator halts execution if unregistered or malformed types are encountered.
+**Where**: Defined in §3.2.1 of the documentation and enforced by `validators/metadata_validator.md`. The validator halts execution if unregistered or malformed types are encountered.
 **How**: Every file's metadata must declare a valid `fileType`. If applicable, a matching `subtype` may be used to refine behavior (e.g., `domain_spec`, `index`, or `buffer`). These fields drive enforcement in lifecycle counters, write audits, and load plan resolution.
 **Example Use Case**: A structural mapping file might include:
 <!-- @meta
@@ -634,7 +634,7 @@ Because the total estimated token load exceeds the max budget, the AI elects to 
 **What**: A command-line and script-invocable validation utility that checks for structural, metadata, and schema correctness across all files in the cascade. It ensures that file headers, metadata blocks, fileType declarations, and lifecycle tags are properly formed and conform to system constraints.\
 **Why**: Protects the cascade from malformed inputs, undefined behaviors, and silent logic failures by enforcing policy and format compliance before files are loaded, merged, or written. This acts as a pre-flight integrity layer for all file-based interactions.\
 **Where**:
-- Primary logic lives in `validators/metadata_validator.ts`.
+ - Primary logic lives in `validators/metadata_validator.md`.
 - Called during:
   - Manual developer audits
   - Pre-WRITE ACT logic
@@ -655,8 +655,8 @@ Because the total estimated token load exceeds the max budget, the AI elects to 
 **Example Use Case**:\
 A developer adds `drafts/test_ui.md` with malformed metadata:
 `fileType: rolling subtype: buffer editPolcy: appendOly # typo`
-Running the validator with:
-`npx ts-node validators/metadata_validator.ts`
+Running the validator as documented in `validators/metadata_validator.md`:
+`npx ts-node path/to/validator`
 Returns:
 `✖ drafts/test_ui.md - Unknown field: "editPolcy" - Did you mean: "editPolicy"? - Invalid value for editPolicy: "appendOly"`
 The AI or dev can now correct this before the file enters the cascade context.
@@ -752,7 +752,7 @@ Weeks later, if the system encounters unexpected behavior or a failed validation
   - `drafts/` for speculative types or counters
   - `metadata_schemas.md` for formal field/type registration
   - `system_manifest.md` for official system-wide declarations
-  - `validators/metadata_validator.ts` for validation logic
+  - `validators/metadata_validator.md` for validation logic
 - Metadata tags like `counter: true`, `fileType: extension`, or `routingClass: custom` are used to register new entities.
 - Use `job_logs/temp_job.md` to test and trace new extensions during staged rollout.\
   **How**:\
@@ -999,7 +999,7 @@ A session begins. The AI:
 ├── _locks/
 │   └── active_edit.lock                 # Concurrency guard (single-writer)
 ├── validators/
-│   └── metadata_validator.ts            # CLI: header, hash, timestamp checks
+│   └── metadata_validator.md            # Validator usage documentation
 └── _meta/
     └── cascade_feature_index.md         # Master feature & directory catalogue
 ```
@@ -1049,7 +1049,7 @@ Every file begins with a single, miniature contract written as an HTML‑style c
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | **First line of the file**                             | Ensures the AI sees it before any other content during READ.                                              |
 | **HTML comment wrapper** `<!-- @meta { … } -->`        | Keeps Markdown render clean while remaining machine‑readable.                                             |
-| **Valid JSON inside**                                  | Parsed by both the AI and the `metadata_validator.ts` CLI. No trailing commas, double‑quoted keys/values. |
+| **Valid JSON inside**                                  | Parsed by both the AI and the metadata validator described in `validators/metadata_validator.md`. No trailing commas, double‑quoted keys/values. |
 | Inline `//` comments **allowed** outside of production | Permitted for examples & docs; the validator strips them. Remove in live files to stay strict‑JSON.       |
 | **One block only** per file                            | Multiple blocks cause undefined behaviour; the first wins.                                                |
 
@@ -1084,7 +1084,7 @@ Metadata blocks themselves cannot sit **inside** a `<!-- PROTECTED -->` range (t
 
 
 ### 4.6 Validation & Linting [TO BE BUILT]
-- **CLI**: `validators/metadata_validator.ts` enforces schema, unknown keys, alias misuse, and JSON validity.
+- **CLI**: see `validators/metadata_validator.md` for schema, unknown key, alias misuse, and JSON validity checks.
 - **AI Self‑check**: During READ, the assistant drops any file whose metadata fails to parse cleanly.
 - **CI**: Recommended to run validator in pre‑commit hook to catch drift before merge.
 
