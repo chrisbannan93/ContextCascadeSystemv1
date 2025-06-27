@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
+  "fileType": "permanent",
   "subtype": "thresholdPolicy",
   "purpose": "Counter thresholds that trigger rereads, pruning or merges.",
   "editPolicy": "appendOrReplace",

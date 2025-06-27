@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
+  "fileType": "permanent",
   "subtype": "safeguardsPolicy",
   "purpose": "Rules enforcing hash integrity, protected blocks and write gates.",
   "editPolicy": "appendOrReplace",
