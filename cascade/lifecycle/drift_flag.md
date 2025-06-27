@@ -1,7 +1,7 @@
 <!-- @meta {
   "fileType": "counter",
   "purpose": "Signal file indicating unresolved drift or integrity failure.",
-  "editPolicy": "appendOrReplace",
+  "editPolicy": "incrementOnly",
   "routeScope": "system"
 } -->
 # Drift Flag
