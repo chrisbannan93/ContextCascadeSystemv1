@@ -133,6 +133,13 @@ These types govern lifecycle behaviors, memory management, and operational rules
 - New file types, domains, or lifecycle counters follow a strict extension pattern workflow, involving validation, approval, and secure implementation.
 - Contributions must pass rigorous metadata validation (`validators/metadata_validator.md`).
 
+### 🧪 Validator Setup
+
+The metadata validator requires Node.js and `npm`.
+
+1. Run `npm install` from the repository root to install `ts-node` and TypeScript.
+2. Execute `npm run validate -- <path/to/file>` to check a file's metadata block.
+
 ---
 
 ## 📖 Documentation

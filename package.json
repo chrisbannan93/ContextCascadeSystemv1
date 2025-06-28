@@ -1,0 +1,12 @@
+{
+  "name": "contextcascade",
+  "version": "1.0.0",
+  "description": "Utilities for the ContextCascade memory system",
+  "scripts": {
+    "validate": "ts-node cascade/validators/metadata_validator.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.0.0",
+    "typescript": "^4.0.0"
+  }
+}
