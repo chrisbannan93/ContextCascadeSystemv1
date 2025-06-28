@@ -29,3 +29,6 @@ Thresholds below are evaluated during **Phase 2 – ACT**. When a lifecycle co
 - Update thresholds only via a reviewed job plan.
 - Add a new row when introducing a new domain counter.
 - Keep table alphabetised for diff‑friendly PRs.
+---
+##### Next Steps
+After you read this file in full, read all the /cascade/lifecycle/*.md files next
