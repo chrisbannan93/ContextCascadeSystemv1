@@ -24,4 +24,5 @@ This file tracks the total number of WRITE cycles that have occurred across the 
 - Monotonically increasing.
 ---
 ##### Next Steps
-After you read this file in full, read all the /cascade/lifecycle/*.md files next starting with cascade/lifecycle/counter.md
+-After you read this file in full, read all the cascade/lifecycle/client.md
+-You will likely have to come back in here to update the Current Count section incrementally.
