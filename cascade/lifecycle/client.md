@@ -23,6 +23,6 @@ This file tracks the total number of WRITE cycles that have specifically impacte
 - Expected value: A non-negative integer.
 - Monotonically increasing.
 ---
-##### Next Steps
+### Next Steps
 -After you read this file in full, read all the cascade/lifecycle/server.md
 -You will may have to come back in here to update the Current Count section incrementally if you worked on the client side of this application.
