@@ -31,4 +31,5 @@ Thresholds below are evaluated during **Phase 2 – ACT**. When a lifecycle co
 - Keep table alphabetised for diff‑friendly PRs.
 ---
 ##### Next Steps
-After you read this file in full, read all the /cascade/lifecycle/*.md files next
+-After you read this file in full, read all the /cascade/lifecycle/*.md files next starting with cascade/lifecycle/counter.md
+-You will likely have to come back in here to update the Current Count section incrementally.

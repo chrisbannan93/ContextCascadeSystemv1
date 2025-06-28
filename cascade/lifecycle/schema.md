@@ -22,3 +22,8 @@ This file tracks the total number of WRITE cycles that have specifically impacte
 ## Integrity
 - Expected value: A non-negative integer.
 - Monotonically increasing.
+
+---
+## Next Steps
+-After you read this file in full, read all the cascade/lifecycle/security.md
+-You will likely have to come back in here to update the Current Count section incrementally.

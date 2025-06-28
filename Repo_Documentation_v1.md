@@ -29,15 +29,19 @@ To begin using the ContextCascade system, ensure the following are met:
 - Recommended: Developer is able to provide the AI with consistent session-initiation prompts that include file path references.
 
 ### 1.2 Bootstrap Script or Manual Setup
--MUST ADD A ZIP FILE ATTACHMENT OF THE STARTER FOLDER
+-Run this pythod script to produce the Context Cascade Repo within your broader repo/application:
+[create_repo.py](ContextCascadeSystemv1/blob/feat/create-repo-script/create_repo.py)
 
 ### 1.3 Session Initiation Prompt Example
 Use the following prompt to initialize a Replit AI session using the ContextCascade system:
 ```
-Begin by reading /cascade/00_BOOTSTRAP.md. It contains your mandatory operating instructions.
+1) !!!IMPORTANT!!! Begin by reading /cascade/00_BOOTSTRAP.md. It contains your mandatory operating instructions.
 Then proceed to /cascade/index.md to load the file map, followed by the loop protocol in /cascade/protocols/loop_protocol.md.
 Respect file lifespans and read priorities as defined in /cascade/protocols/file_lifespans.md.
 You must complete a full READ phase before taking any ACT or WRITE actions.
+
+2) {INSERT USER PROMPT HERE}
+
 ```
 This can still be shortened with aliases or injected into Replit’s AI memory, but must always begin with /cascade/00_BOOTSTRAP.md and include path anchors to core protocol files.
 
