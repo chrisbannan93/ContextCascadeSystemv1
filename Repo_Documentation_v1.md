@@ -29,7 +29,8 @@ To begin using the ContextCascade system, ensure the following are met:
 - Recommended: Developer is able to provide the AI with consistent session-initiation prompts that include file path references.
 
 ### 1.2 Bootstrap Script or Manual Setup
--MUST ADD A ZIP FILE ATTACHMENT OF THE STARTER FOLDER
+-Run this pythod script to produce the Context Cascade Repo within your broader repo/application:
+[create_repo.py](ContextCascadeSystemv1/blob/feat/create-repo-script/create_repo.py)
 
 ### 1.3 Session Initiation Prompt Example
 Use the following prompt to initialize a Replit AI session using the ContextCascade system:
