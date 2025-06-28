@@ -1,71 +1,47 @@
 <!-- @meta {
   "fileType": "structural",
-  "subtype": "domainIndex",
-  "purpose": "Manifest for the schema domain—maps contracts, validation traces, and WIP drafts to lifecycle hygiene.",
+  "subtype": "index",
+  "purpose": "Index and routing map for all files related to data schemas, validation rules, and API contracts.",
   "editPolicy": "appendOrReplace",
   "routeScope": "schema"
 } -->
+# Schema Domain Index
 
-### /domains/schema/index.md
-
-> **Role:** Central map for **schema** memory.  
-> Guides READ-phase hydration of contract data and ACT-phase hygiene using the `schema` lifecycle counter.
+This file serves as the master index for all memory, guidance, and specification files related to data schemas, validation rules, API contracts, and other structural definitions of the application.
 
 ---
+## Structure
+This index typically lists key files or sub-directories within the `/cascade/domains/schema/` path.
 
-#### Registered Schema Assets
+| Path within Schema Domain | Role / Description                     | `fileType` (if specific) |
+|---------------------------|----------------------------------------|--------------------------|
+| `README.md`               | Overview of schema domain memory       | `permanent`              |
+| `database_schema.md`      | Database ERD and table definitions     | `permanent`              |
+| `api_contracts.md`        | Detailed API endpoint specifications   | `permanent`              |
+| `validation_rules.md`     | Business logic validation rules        | `permanent`              |
+| `data_types.md`           | Common data type definitions           | `permanent`              |
+| `schema_versions/`        | Directory for versioned schema snapshots | (directory)              |
+| `schema_summary.md`       | Rolling summary of schema changes      | `rolling`                |
+| ...                       | ...                                    | ...                      |
 
-| Path                            | Class      | Purpose / Notes                                       |
-|---------------------------------|------------|-------------------------------------------------------|
-| `schema.md`                     | counter    | Tick tracker for every schema-domain WRITE            |
-| `summary.md`                    | archive    | Canonical snapshot of merged schema edits             |
-| `validation_trace.md`           | rolling    | Ephemeral log of recent validation runs               |
-| `validators/*.json`             | static     | Auto-generated validator artefacts (read-only)        |
-| `temp_notes/schema_*.md`        | ephemeral  | Scratch buffers (prunable)                            |
-| `drafts/schema_*.md`            | draft      | WIP contract changes awaiting promotion               |
-
----
-
-#### Default Load Plan
-
-| Phase | Files Loaded                      | Rationale                           |
-|-------|-----------------------------------|-------------------------------------|
-| READ  | `summary.md`                      | Lightweight contract context        |
-|       | `validation_trace.md` *(if exists)*| Required for ongoing schema jobs    |
-|       | `validators/*.json` *(on demand)* | Pulled when validation diffs needed |
-|       | `temp_notes/*` *(by reference)*   | Included only if job plan cites them|
+*(This is an example structure. Populate with actual files as they are created for the schema domain.)*
 
 ---
-
-#### Lifecycle & Threshold Integration
-
-* Tick Source: **`/lifecycle/schema.md`**  
-* Threshold Policy: **`/protocols/file_lifespans.md`**
-
-| Threshold          | Queued Action                                   |
-|--------------------|-------------------------------------------------|
-| `reread_threshold` | `force_reread(schema)` – reload contract files  |
-| `prune_threshold`  | purge `temp_notes` + stale `validation_trace`   |
-| `merge_threshold`  | fold `validation_trace.md` → `summary.md`       |
+## Usage
+- When a task is scoped to the `schema` domain (e.g., updating an API, modifying database structure), this index helps the AI identify relevant files.
+- It's referenced by the global `/cascade/index.md` and `/cascade/system_manifest.md`.
+- Lifecycle actions for the schema domain (triggered by `/cascade/lifecycle/schema.md` counter) involve rereading this index and its listed files.
 
 ---
+## Maintenance
+- This file should be updated whenever new persistent memory files or sub-modules are added to the `/cascade/domains/schema/` directory.
+- Use `editPolicy: appendOrReplace` to allow updates to the table.
+- For clarity, use full paths from the `/cascade/` root for entries in the table (e.g., `/cascade/domains/schema/api_contracts.md`).
 
-#### Governance & Audit Hooks
+**Current Schema Domain Index:**
 
-- **Counters:** Every WRITE touching this domain increments `/lifecycle/schema.md`.  
-- **Tokens:** Usage monitored in `/audit/token_summary.md`.  
-- **Pruning:** Targets and ordering defined in `/audit/prune_plan.md`.  
-- **Security:** Manual edits to validators trigger `/security/security_review.md`.
+| Path                                     | Role / Description               |
+|------------------------------------------|----------------------------------|
+| `/cascade/domains/schema/README.md`      | Overview of schema domain memory |
 
----
-
-#### Maintenance Guidelines
-
-1. **Metadata required** on all new schema files (`routeScope: schema`).  
-2. Keep validator artefacts (`validators/*.json`) read-only—regenerated via job plan.  
-3. Alphabetise table rows when adding new paths for merge-friendly diffs.
-
----
-
-**Summary**  
-This index anchors all contract-level memory for the schema domain, ensuring accurate hydration, predictable buffer decay, and audit-friendly summaries while controlling token overhead.
+*(Add more entries as schema-specific memory files are created.)*
