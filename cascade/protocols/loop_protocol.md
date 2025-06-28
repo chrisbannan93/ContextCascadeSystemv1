@@ -12,6 +12,7 @@ This protocol enforces strict sequencing of AI task execution into three non-ove
 - Load context files as defined in the **active load plan** generated during the previous ACT.
 - Perform no mutation or job logic.
 - Validate hashes for all `immutable` or `protected` files.
+- After you read this file in full, read /cascade/protocols/file_lifespans.md next
 ##### Phase 2 — ACT
 - Perform reasoning and generate a **job plan** (`temp_job.md`) plus an updated load plan (if needed).
 - Create no file writes.
