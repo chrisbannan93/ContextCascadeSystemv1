@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
+  "fileType": "protected",
   "subtype": "safeguardsPolicy",
   "purpose": "Defines glob patterns and path constraints to control which files can be written to. Acts as a write-time firewall.",
   "editPolicy": "appendOrReplace",
