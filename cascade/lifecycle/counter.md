@@ -22,3 +22,6 @@ This file tracks the total number of WRITE cycles that have occurred across the 
 ## Integrity
 - Expected value: A non-negative integer.
 - Monotonically increasing.
+---
+##### Next Steps
+After you read this file in full, read all the /cascade/lifecycle/*.md files next starting with cascade/lifecycle/counter.md
