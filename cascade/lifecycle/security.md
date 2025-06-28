@@ -22,3 +22,8 @@ This file tracks the total number of WRITE cycles related to high-risk actions o
 ## Integrity
 - Expected value: A non-negative integer.
 - Monotonically increasing.
+
+---
+## Next Steps
+-After you read this file in full, read all the cascade/lifecycle/drift_flag.md
+-You will may have to come back in here to update the Current Count section incrementally.
