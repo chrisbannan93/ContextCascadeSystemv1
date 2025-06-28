@@ -1,6 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
-  "subtype": "safeguardsPolicy",
+  "fileType": "permanent",
   "purpose": "Comprehensive enforcement rules for hash integrity, protected blocks, write-gates, and recovery triggers.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global"

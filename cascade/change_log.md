@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
+  "fileType": "structural",
   "subtype": "index",
   "purpose": "Manifest for change-log buffers; governs rolling retention (recent.md) and archival persistence (summary.md).",
   "editPolicy": "appendOrReplace",

@@ -1,5 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
+  "fileType": "structural",
   "subtype": "index",
   "purpose": "Manifest for job-log buffers; governs retention of recent job plans and their archival into a permanent ledger.",
   "editPolicy": "appendOrReplace",

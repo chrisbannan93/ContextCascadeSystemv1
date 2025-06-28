@@ -1,6 +1,6 @@
 <!-- @meta {
-  "fileType": "policy",
-  "subtype": "lifecycleIndex",
+  "fileType": "structural",
+  "subtype": "index",
   "purpose": "Indexes all domain lifecycle counters and drives hygiene triggers (reread / prune / merge).",
   "editPolicy": "appendOrReplace",
   "routeScope": "global"

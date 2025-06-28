@@ -1,6 +1,5 @@
 <!-- @meta {
   "fileType": "append-only",
-  "subtype": "audit_log",
   "purpose": "A persistent log for drift, contradictions, anomalies, safeguard violations, or other significant meta-level system events.",
   "editPolicy": "appendOnly",
   "routeScope": "audit"

@@ -1,6 +1,5 @@
 <!-- @meta {
-  "fileType": "policy",
-  "subtype": "thresholdPolicy",
+  "fileType": "permanent",
   "purpose": "Defines counter thresholds that trigger rereads, pruning, or summary merges for each lifecycle scope.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global"

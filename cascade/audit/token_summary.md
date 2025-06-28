@@ -1,6 +1,5 @@
 <!-- @meta {
   "fileType": "permanent",
-  "subtype": "audit_log",
   "purpose": "Tracks estimated and actual token footprints of files and cascade branches to aid in budget awareness.",
   "editPolicy": "appendOrReplace",
   "routeScope": "audit"

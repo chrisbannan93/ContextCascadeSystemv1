@@ -1,6 +1,5 @@
 <!-- @meta {
   "fileType": "evictable",
-  "subtype": "system_plan",
   "purpose": "Defines and executes controlled cleanup operations for temporary, expired, or unnecessary files.",
   "editPolicy": "overwrite",
   "routeScope": "audit",

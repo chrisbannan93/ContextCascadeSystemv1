@@ -1,6 +1,5 @@
 <!-- @meta {
-  "fileType": "protocol",
-  "subtype": "recoveryPlan",
+  "fileType": "permanent",
   "purpose": "Structured fallback procedure triggered by safeguard failure, drift, or WRITE abortion.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global"

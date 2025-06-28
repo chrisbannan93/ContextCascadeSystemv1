@@ -1,6 +1,5 @@
 <!-- @meta {
   "fileType": "append-only",
-  "subtype": "audit_log",
   "purpose": "Sequential log recording the successful completion of each full READ-ACT-WRITE cascade loop.",
   "editPolicy": "appendOnly",
   "routeScope": "audit"

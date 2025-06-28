@@ -1,7 +1,7 @@
 <!-- @meta {
-  "fileType": "initialization",
+  "fileType": "immutable",
   "purpose": "Declarative context primer for the first READ cycle of a new session.",
-  "editPolicy": "appendOnly",
+  "editPolicy": "readonly",
   "routeScope": "global"
 } -->
 # Initial Context Primer

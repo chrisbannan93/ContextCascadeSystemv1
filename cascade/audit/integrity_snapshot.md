@@ -1,6 +1,5 @@
 <!-- @meta {
   "fileType": "append-only",
-  "subtype": "audit_log",
   "purpose": "A canonical ledger of cryptographic hashes (SHA-256) for all immutable and protected files in the cascade.",
   "editPolicy": "appendOnly",
   "routeScope": "audit"

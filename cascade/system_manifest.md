@@ -1,7 +1,7 @@
 <!-- @meta {
   "fileType": "immutable",
   "purpose": "Declarative list of active Cascade memory domains and their root paths.",
-  "editPolicy": "appendOrReplace",
+  "editPolicy": "readonly",
   "routeScope": "global"
 } -->
 # ContextCascade System Manifest
