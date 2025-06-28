@@ -1,53 +1,53 @@
 <!-- @meta {
   "fileType": "append-only",
-  "subtype": "loopBoundary",
-  "purpose": "Marks validated WRITE-phase loop completions for traceability and state-lock verification.",
+  "purpose": "Sequential log recording the successful completion of each full READ-ACT-WRITE cascade loop.",
   "editPolicy": "appendOnly",
-  "routeScope": "global"
+  "routeScope": "audit"
 } -->
+# Loop Checkpoint Log
 
-### /cascade/checkpoints/loop_checkpoint.md
-
-> **Role:** Immutable ledger of successful WRITE-phase completions.  
-> Each entry proves the loop executed with integrity, all counters and summaries were committed, and no unresolved drift exists.
+This file contains an append-only, sequential log that records the successful completion of each full ContextCascade loop (READ → ACT → WRITE). It serves as a crucial audit trail for system progression, rollback orchestration, and session reconstruction.
 
 ---
+## Entry Format
+Each entry signifies one successfully completed loop and should be recorded after all post-WRITE tasks (hash checks, confirmations, summary updates) are finished.
 
-#### Loop Checkpoints (append-only)
+A structured format is recommended for each entry:
 
-| Cycle | Timestamp (UTC)       | Job ID   | Commit Hash (Post-WRITE)     | Status Notes                  |
-|:-----:|------------------------|----------|-------------------------------|-------------------------------|
-| —     | —                      | —        | —                             | _Checkpoint log initialized_  |
+```
+---
+- **LoopID:** (Sequential integer or unique identifier, e.g., timestamp or global counter value)
+  **Timestamp:** YYYY-MM-DDTHH:mm:ssZ (UTC)
+  **JobPlanReference:** (Path or hash of the `job_logs/temp_job.md` that was executed)
+  **FilesWritten:**
+    - path: `/path/to/file1.md`
+      hashAfter: "sha256-hash1..."
+    - path: `/path/to/file2.md`
+      hashAfter: "sha256-hash2..."
+  **CountersIncremented:**
+    - global: value_after
+    - client: value_after (if client domain was affected)
+    - server: value_after (if server domain was affected)
+    - ... (other affected domain counters)
+  **Outcome:** `success` (This file should only log successful loops. Failures are logged in `meta_audit.md`)
+  **PostHashCheck:** `confirmed` | `warning` (if minor, non-critical discrepancies were noted but accepted)
+---
+```
 
 ---
-
-#### Write Conditions (required for entry)
-
-1. All domain counters incremented cleanly.  
-2. `job_logs/temp_job.md` passed pre/post hash validation.  
-3. No unresolved flags in `/lifecycle/drift_flag.md`.  
-4. If merge required, `change_log/recent.md` was flushed.  
-5. `meta_audit.md` did not log WRITE-phase blocking errors.
+## Usage
+- **Traceability:** Provides a clear history of system operations.
+- **Rollback:** Helps identify known-good states to roll back to if drift or corruption occurs.
+- **Session Reconstruction:** Can assist in understanding the sequence of operations during an audit or debugging session.
+- **Drift Detection:** Gaps in LoopIDs or timestamps might indicate missed cycles or system interruptions, prompting a look at `meta_audit.md`.
 
 ---
+## Current Checkpoints:
 
-#### Enforcement Logic
-
-- Written once per **complete loop cycle**, during `WRITE(commit_phase)`.
-- If omitted → next loop enters **safe mode** (plan gated).
-- Hash is SHA-256 digest of all committed changes in job plan.
+*(This log is appended to by the system automatically after each successful WRITE cycle. No checkpoints yet.)*
 
 ---
-
-#### Validation Use
-
-- Used by `ACT(enforce_integrity_phase)` to determine:
-  - If WRITE was safely finalized
-  - If loop state is resumable
-- Required before scheduling new jobs, merges, or resets.
-
----
-
-**Summary**  
-`loop_checkpoint.md` acts as a gatekeeper for cascade loop continuity.  
-No job plan or mutation should proceed without a valid, verifiable checkpoint entry.
+## Maintenance
+- This file is strictly append-only. Existing entries must never be modified or deleted.
+- Ensure the LoopID is unique and preferably sequential.
+- If a WRITE cycle fails or is aborted, no entry should be written here for that cycle. Failures are documented in `/cascade/audit/meta_audit.md`.

@@ -1,8 +1,7 @@
 <!-- @meta {
   "fileType": "immutable",
   "purpose": "Bootstrap file enforcing protocol startup, scope discipline, and memory system entry constraints.",
-  "editPolicy": "readonly",
-  "routeScope": "global"
+  "editPolicy": "readonly"
 } -->
 # ContextCascade Bootstrap Guide
 Welcome. This file is the required entrypoint for using the ContextCascade memory system. Before any task, you must:
@@ -25,7 +24,7 @@ Welcome. This file is the required entrypoint for using the ContextCascade memor
 
 ---
 ## Summary
-If it’s not memory, constraint, protocol, or trace —  
+If it’s not memory, constraint, protocol, or trace —
 → it doesn’t belong in Cascade.
 
 Proceed to `/cascade/index.md`.

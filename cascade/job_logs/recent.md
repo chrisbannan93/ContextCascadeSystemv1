@@ -1,21 +1,21 @@
 <!-- @meta {
   "fileType": "rolling",
   "subtype": "buffer",
-  "purpose": "Stores summaries of recent job plans before archival.",
+  "purpose": "A rolling log of the most recent job plan summaries, up to a defined maximum.",
   "editPolicy": "appendOnly",
-  "maxEntries": 5,
   "routeScope": "global",
-  "mergeTarget": "job_logs/summary.md",
-  "mergePolicy": "append"
+  "maxEntries": 5,
+  "mergeTarget": "/cascade/job_logs/summary.md"
 } -->
+# Recent Job Logs
 
-### /cascade/job_logs/recent.md
+This file contains a rolling buffer of summaries from recently executed job plans (from `temp_job.md`). When this log exceeds `maxEntries` (5), the oldest entry is moved to `/cascade/job_logs/summary.md`.
 
-> **Role:** Rolling window of recent `temp_job.md` summaries.
-> When `maxEntries` is exceeded, the oldest entry is appended to `summary.md` and removed here.
+Each entry should summarize a completed job, including:
+- Job ID (could be a timestamp or a unique hash of the plan).
+- Intent of the job.
+- Key files affected.
+- Status (e.g., success, failed, rolled_back).
 
 ---
-
-#### Recent Jobs (max 5)
-
-
+*(No job summaries yet)*

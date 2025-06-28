@@ -1,61 +1,47 @@
 <!-- @meta {
   "fileType": "structural",
-  "subtype": "domainIndex",
-  "purpose": "Manifest for the server domain. Lists backend memory files and defines load / hygiene behaviour.",
+  "subtype": "index",
+  "purpose": "Index and routing map for all files and sub-modules within the 'server' domain.",
   "editPolicy": "appendOrReplace",
   "routeScope": "server"
 } -->
+# Server Domain Index
 
-### /domains/server/index.md
-
-> **Role:** Maps the **server** memory surface—API logic, infra plans, and debug buffers.  
-> Guides READ hydration and ACT-phase hygiene using lifecycle counters and threshold policy.
+This file serves as the master index for all memory, guidance, and specification files related to the 'server' domain of the application (backend logic, APIs, services, etc.). It helps in targeted context loading and routing for server-specific tasks.
 
 ---
+## Structure
+This index typically lists key files or sub-directories within the `/cascade/domains/server/` path.
 
-#### Registered Server Files
+| Path within Server Domain | Role / Description                  | `fileType` (if specific) |
+|---------------------------|-------------------------------------|--------------------------|
+| `README.md`               | Overview of server domain memory    | `permanent`              |
+| `architecture.md`         | Server-side architecture decisions  | `permanent`              |
+| `api_implementation.md`   | Details on API endpoint logic       | `permanent`              |
+| `services.md`             | Overview of microservices/modules   | `permanent`              |
+| `database_interactions.md`| How server interacts with database  | `permanent`              |
+| `auth_flow.md`            | Server-side authentication flow     | `permanent`              |
+| `server_summary.md`       | Rolling summary of server changes   | `rolling`                |
+| ...                       | ...                                 | ...                      |
 
-| Path                          | Class      | Purpose                                          |
-|-------------------------------|----------- |--------------------------------------------------|
-| `server.md`                   | counter    | Lifecycle ticks for backend WRITE activity       |
-| `debug_output.md`             | rolling    | Runtime logs & trace buffers (prunable)          |
-| `summary.md`                  | archive    | Durable digest of merged server logs             |
-| `temp_notes/server_*.md`      | ephemeral  | Scratch buffers used during active jobs          |
-| `drafts/server_*.md`          | draft      | WIP backend plans or experimental notes          |
-
----
-
-#### Default Load Plan
-
-| Phase | Included Files                      | Rationale                        |
-|-------|-------------------------------------|----------------------------------|
-| READ  | `summary.md`                        | Lightweight context hydrate      |
-|       | `debug_output.md` *(if exists)*     | Needed only for active debugging |
-|       | `temp_notes/*` *(on demand)*        | Loaded when referenced           |
+*(This is an example structure. Populate with actual files as they are created for the server domain.)*
 
 ---
-
-#### Lifecycle Integration
-
-* Tick source: **`/lifecycle/server.md`**  
-* Thresholds from **`/protocols/file_lifespans.md`**
-
-| Threshold        | Action Queued                          |
-|------------------|----------------------------------------|
-| `reread_threshold` | `force_reread(server)`                |
-| `prune_threshold`  | purge `temp_notes` + old `debug_output` |
-| `merge_threshold`  | move `debug_output.md` → `summary.md` |
+## Usage
+- When a task is scoped to the `server` domain, this index helps the AI identify relevant files to load.
+- It's referenced by the global `/cascade/index.md` and `/cascade/system_manifest.md`.
+- Lifecycle actions for the server domain (triggered by `/cascade/lifecycle/server.md` counter) might involve rereading this index and its listed files.
 
 ---
+## Maintenance
+- This file should be updated whenever new persistent memory files or sub-modules are added to the `/cascade/domains/server/` directory.
+- Use `editPolicy: appendOrReplace` to allow updates to the table.
+- For clarity, use full paths from the `/cascade/` root for entries in the table (e.g., `/cascade/domains/server/architecture.md`).
 
-#### Governance & Audit
+**Current Server Domain Index:**
 
-* All server writes increment `server.md` counter.  
-* Token usage tracked via `/audit/token_summary.md`.  
-* Prune decisions follow `/audit/prune_plan.md`.  
-* File additions must include valid `@meta` with `routeScope: server`.
+| Path                                   | Role / Description               |
+|----------------------------------------|----------------------------------|
+| `/cascade/domains/server/README.md`    | Overview of server domain memory |
 
----
-
-**Summary**  
-This index defines the backend memory map, ensuring server logic is hydrated efficiently, debug buffers are pruned on schedule, and summaries remain compact for future READ cycles.
+*(Add more entries as server-specific memory files are created.)*

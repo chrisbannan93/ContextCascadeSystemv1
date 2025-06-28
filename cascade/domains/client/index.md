@@ -1,54 +1,48 @@
 <!-- @meta {
   "fileType": "structural",
-  "subtype": "domainIndex",
-  "purpose": "Manifest for the client domain. Routes all UI memory, ephemeral state, and cascade hygiene targets.",
+  "subtype": "index",
+  "purpose": "Index and routing map for all files and sub-modules within the 'client' domain.",
   "editPolicy": "appendOrReplace",
   "routeScope": "client"
 } -->
+# Client Domain Index
 
-### /domains/client/index.md
-
-> **Role:** Domain index for the **client** memory scope.  
-> Resolves active, rolling, and archival UI content for context hydration and hygiene scheduling.
+This file serves as the master index for all memory, guidance, and specification files related to the 'client' domain of the application. It helps in targeted context loading and routing for client-specific tasks.
 
 ---
+## Structure
+This index typically lists key files or sub-directories within the `/cascade/domains/client/` path. Each entry might specify the role or type of content.
 
-#### Registered Client Files
+| Path within Client Domain | Role / Description                 | `fileType` (if specific) |
+|---------------------------|------------------------------------|--------------------------|
+| `README.md`               | Overview of client domain memory   | `permanent`              |
+| `architecture.md`         | Client-side architecture decisions | `permanent`              |
+| `conventions.md`          | Client coding/naming conventions   | `permanent`              |
+| `state_management.md`     | Client state management strategy   | `permanent`              |
+| `components/`             | Directory for component specs      | (directory)              |
+| `components/button.md`    | Specification for Button component | `permanent`              |
+| `api_interfaces.md`       | Client-side view of API contracts  | `permanent`              |
+| `client_summary.md`       | Rolling summary of client changes  | `rolling`                |
+| ...                       | ...                                | ...                      |
 
-| Path                         | Class         | Purpose                                     |
-|------------------------------|---------------|---------------------------------------------|
-| `client.md`                  | counter       | Lifecycle tick tracker for UI changes       |
-| `session_trace.md`           | rolling       | Logs session-bound client memory            |
-| `summary.md`                 | archive       | Durable digest of recent UI state           |
-| `temp_notes/*.md`            | ephemeral     | Short-lived notes from active interactions  |
-| `drafts/client_*.md`         | draft         | Experimental UI stubs and pending memory    |
-
----
-
-#### Domain Load Behavior
-
-- **READ phase**:
-  - Loads `summary.md` by default
-  - Loads `session_trace.md` if session is live
-  - Loads `temp_notes/*.md` only if referenced in job plan
-
-- **ACT phase**:
-  - Inspects tick from `/lifecycle/client.md`
-  - Applies thresholds from `/protocols/file_lifespans.md`:
-    - `reread_threshold` → `force_reread(client)`
-    - `prune_threshold` → queue `temp_notes/*.md`
-    - `merge_threshold` → compress `session_trace.md` into `summary.md`
+*(This is an example structure. Populate with actual files as they are created for the client domain.)*
 
 ---
-
-#### Maintenance & Validation
-
-- All WRITE-phase changes increment `/lifecycle/client.md`
-- Memory footprint tracked via `/audit/token_summary.md`
-- Pruning decisions resolved through `/audit/prune_plan.md`
-- File additions require valid `@meta` headers and must declare `routeScope: client`
+## Usage
+- When a task is scoped to the `client` domain, this index helps the AI identify relevant files to load.
+- It's referenced by the global `/cascade/index.md` and `/cascade/system_manifest.md`.
+- Lifecycle actions for the client domain (triggered by `/cascade/lifecycle/client.md` counter) might involve rereading this index and its listed files.
 
 ---
+## Maintenance
+- This file should be updated whenever new persistent memory files or sub-modules are added to the `/cascade/domains/client/` directory.
+- Use `editPolicy: appendOrReplace` to allow updates to the table.
+- Keep paths relative to the `/cascade/domains/client/` directory for entries in the table, or use full paths from `/cascade/` root for clarity. Using full paths from `/cascade/` root is often less ambiguous. For example: `/cascade/domains/client/architecture.md`. The table above uses relative for brevity.
 
-**Summary**  
-This domain index defines the **client-facing memory surface**, providing UI context during READ, managing buffer hygiene during ACT, and orchestrating summary and ephemeral state flow during WRITE.
+**Current Client Domain Index:**
+
+| Path                                   | Role / Description                 |
+|----------------------------------------|------------------------------------|
+| `/cascade/domains/client/README.md`    | Overview of client domain memory   |
+
+*(Add more entries as client-specific memory files are created.)*

@@ -1,6 +1,5 @@
 <!-- @meta {
   "fileType": "immutable",
-  "subtype": "initialization",
   "purpose": "Declarative context primer for the first READ cycle of a new session.",
   "editPolicy": "readonly",
   "routeScope": "global"
@@ -26,4 +25,3 @@ This file captures static boot context — background assumptions, goals, or per
 - Read this file during session startup if load_plan is absent or empty
 - Do not modify from within ACT phase
 - Update only when system-wide framing shifts
-

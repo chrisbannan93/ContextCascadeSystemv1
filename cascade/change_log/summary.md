@@ -1,35 +1,23 @@
 <!-- @meta {
   "fileType": "append-only",
-  "subtype": "archive",
-  "purpose": "Permanent ledger of every WRITE-cycle summary merged from change_log/recent.md.",
+  "purpose": "A permanent, append-only historical log of all WRITE cycle summaries, including those rolled over from recent.md.",
   "editPolicy": "appendOnly",
   "routeScope": "global"
 } -->
+# Change Log Summary
 
-### /cascade/change_log/summary.md
-
-> **Role:** Immutable audit trail of *all* past WRITE-phase loop summaries.  
-> Rows arrive here from `/cascade/change_log/recent.md` whenever that buffer overflows (`maxEntries` = 7) or a manual/threshold merge is triggered.
+This file is an append-only historical ledger of all successfully completed WRITE cycles. It includes entries merged from `/cascade/change_log/recent.md` when that buffer reaches its `maxEntries` limit.
 
 ---
-
-#### Historical Loop Activity  
-*(chronological — oldest at top, newest appended last)*
-
-| Cycle | Timestamp (UTC)        | Summary / Files Written                           | Job ID |
-|------:|------------------------|---------------------------------------------------|:------:|
-| —     | —                      | _Archive initialised_                             |  —     |
-
----
-
-#### Integrity & Audit Rules
-
-* **Append-only:** any attempt to edit or delete existing rows triggers `/lifecycle/drift_flag.md` and logs a violation in `/audit/meta_audit.md`.  
-* **Timestamp format:** ISO-8601 UTC (`YYYY-MM-DD HH:MM:SSZ`).  
-* **Validator checks:** monotonic cycle numbers and non-decreasing timestamps.  
-* **External archival:** if older segments are exported, leave a stub row noting the export range and destination.
+## Guidelines
+- Entries are added chronologically.
+- Existing entries must not be modified or deleted.
+- Each entry should provide a concise summary of a WRITE cycle, including:
+    - Loop ID or timestamp.
+    - Job plan reference.
+    - Summary of modified files.
+    - Outcome status (e.g., success, rolledBack, partial).
+    - Post-WRITE hash confirmation status.
 
 ---
-
-**Summary:**  
-`summary.md` guarantees full provenance for every WRITE cycle, supporting forensic review, compliance checks, and rollback analysis. Keep it immutable and consistently formatted.
+*(No entries yet)*

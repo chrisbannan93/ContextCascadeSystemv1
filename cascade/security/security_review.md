@@ -1,59 +1,48 @@
 <!-- @meta {
   "fileType": "append-only",
-  "subtype": "review",
-  "purpose": "Append-only ledger of all security reviews triggered by gate violations, hash mismatches, or high-risk WRITE events.",
+  "purpose": "Log of manual or AI-driven security reviews, findings, and approvals for high-risk actions.",
   "editPolicy": "appendOnly",
-  "routeScope": "security",
-  "linkedAudits": ["audit/meta_audit.md"]
+  "routeScope": "security"
 } -->
+# Security Review Log
 
-### /cascade/security/security_review.md
-
-> **Role:** Captures every security-related incident that requires human or elevated AI review.  
-> Each row documents the trigger, investigation notes, reviewer, and outcome.
-
----
-
-#### Review Log  (append-only)
-
-| Timestamp (UTC)        | Trigger Source / File             | Issue Summary                           | Reviewer | Resolution |
-|------------------------|-----------------------------------|-----------------------------------------|----------|-----------|
-| _none yet_             | —                                 | _Log initialised_                       | system   | n/a       |
-
-_Add new rows at the **bottom**; never modify existing entries._
+This file contains an append-only log of all security reviews conducted. This includes reviews for:
+- High-risk actions flagged with `requiresReview: true` in job plans.
+- Modifications to critical system files (e.g., `system_manifest.md`, protocol files).
+- Escalated permissions or overrides of `readonly`, `immutable`, or `protected` policies.
+- Findings from manual or automated security audits.
+- Approvals or rejections of proposed changes.
 
 ---
-
-#### Common Triggers
-
-1. **Write-Gate Breach** — attempt to modify a protected/immutable path.  
-2. **Hash Mismatch** — immutable file fails pre- or post-WRITE hash check.  
-3. **Manual Counter Edit** — any `lifecycle/*.md` counter edited outside loop logic.  
-4. **Skipped Threshold Action** — required merge/prune/reload not queued.  
-5. **Credential Schema Change** — auth/secret files altered without review flag.
-
----
-
-#### Review Protocol
-
-1. **Log Entry**: ACT/AUDIT appends a row here and `/audit/meta_audit.md`.  
-2. **Investigation**: reviewer inspects job plan, diffs, and metadata.  
-3. **Disposition**: update the log row’s *Resolution* field with one of:  
-   - `cleared` — no breach; loop may resume.  
-   - `patched` — issue fixed; follow-up actions complete.  
-   - `flagged` — needs deeper audit; WRITE gated.  
-   - `frozen` — domain locked; emergency rollback initiated.  
-4. **Close-Out**: if `flagged` or `frozen`, create a job plan for remediation and note its Job ID.
+## Entry Format
+Each entry should be clearly timestamped and include:
+- **Date/Timestamp:** When the review was conducted.
+- **Reviewer(s):** Who conducted the review (human agent ID or AI agent version).
+- **Subject:** What was reviewed (e.g., Job Plan ID, file path, proposed change).
+- **Details/Findings:** A summary of the review process and any findings.
+- **Decision/Outcome:** Approved, Rejected, Needs More Info, etc.
+- **Rationale:** Justification for the decision.
+- **Associated Hashes:** (If applicable) Hashes of files before and after an approved change.
 
 ---
-
-#### Enforcement Hooks
-
-- Presence of an **unresolved** (`flagged` / `frozen`) entry halts further WRITE cycles.  
-- Resolution status is re-checked at loop start (`enforce_integrity_phase`).  
-- All edits to this file are verified against append-only policy by `metadata_validator.ts`.
+## Example Entry:
+```
+---
+**Date/Timestamp:** 2025-07-15T10:30:00Z
+**Reviewer(s):** human_admin_chris, ai_agent_jules_v1.2
+**Subject:** Proposed modification to `/cascade/system_manifest.md` (Job Plan: job_temp_a1b2c3d4)
+**Details/Findings:**
+- Intent: Add new domain 'experimental_features'.
+- Impact assessment: Low risk, isolated domain.
+- Hash before: manifest_hash_v1_old
+- Hash after (proposed): manifest_hash_v2_new
+**Decision/Outcome:** Approved
+**Rationale:** The new domain is well-defined and does not interfere with existing core domains. All necessary index files for the domain are included in the job plan.
+**Associated Hashes:**
+- `/cascade/system_manifest.md` (before): sha256-abc...
+- `/cascade/system_manifest.md` (after): sha256-def...
+---
+```
 
 ---
-
-**Summary**  
-`security_review.md` provides a permanent, tamper-evident chain of custody for every security incident in the cascade. Maintain strict append-only discipline and ensure each row is fully resolved before normal operations continue.
+*(No review entries yet)*
