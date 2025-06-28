@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/89b0426b-07fa-4f79-861b-4c5d984ebeeb)<!-- @meta {
+<!-- @meta {
   "fileType": "counter",
   "purpose": "Tracks WRITE-phase activity specifically for the 'schema' domain.",
   "editPolicy": "incrementOnly",
