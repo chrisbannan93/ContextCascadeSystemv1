@@ -35,10 +35,13 @@ To begin using the ContextCascade system, ensure the following are met:
 ### 1.3 Session Initiation Prompt Example
 Use the following prompt to initialize a Replit AI session using the ContextCascade system:
 ```
-Begin by reading /cascade/00_BOOTSTRAP.md. It contains your mandatory operating instructions.
+1) !!!IMPORTANT!!! Begin by reading /cascade/00_BOOTSTRAP.md. It contains your mandatory operating instructions.
 Then proceed to /cascade/index.md to load the file map, followed by the loop protocol in /cascade/protocols/loop_protocol.md.
 Respect file lifespans and read priorities as defined in /cascade/protocols/file_lifespans.md.
 You must complete a full READ phase before taking any ACT or WRITE actions.
+
+2) {INSERT USER PROMPT HERE}
+
 ```
 This can still be shortened with aliases or injected into Replit’s AI memory, but must always begin with /cascade/00_BOOTSTRAP.md and include path anchors to core protocol files.
 
