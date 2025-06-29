@@ -28,11 +28,67 @@ To begin using the ContextCascade system, ensure the following are met:
 - Recommended: Familiarity with loop-safe prompting and separation of read/act/write phases.
 - Recommended: Developer is able to provide the AI with consistent session-initiation prompts that include file path references.
 
-### 1.2 Bootstrap Script or Manual Setup
--Run this pythod script to produce the Context Cascade Repo within your broader repo/application:
-[create_repo.py](ContextCascadeSystemv1/blob/feat/create-repo-script/create_repo.py)
+### 1.2 Initial Setup: Structure and Foundational Context
 
-### 1.3 Session Initiation Prompt Example
+Setting up ContextCascade for a new project involves two main stages: creating the directory structure and then populating initial core context with AI assistance.
+
+**A. Creating the Directory Structure:**
+The `create_repo.py` script can be used to generate the standard ContextCascade directory scaffold within your existing project:
+- Run: `python create_repo.py` (or `python3 create_repo.py`)
+- This script creates the `/cascade` directory and its subdirectories with placeholder files as defined in the ContextCascade specification.
+- Alternatively, you can manually create the directory structure based on Section 3.1 (Full Directory Tree).
+
+**B. AI-Assisted Foundational Context Population:**
+Once the directory structure is in place, your first interaction with the AI assistant should focus on populating the critical `cascade/init_context.md` file.
+1.  **Provide High-Level Project Details:** Inform the AI about your project's name, primary goals, any core technology preferences, and the intended role of the AI.
+2.  **Instruct AI to Draft `init_context.md`:** Task the AI to take your high-level input and draft the content for `cascade/init_context.md` using its defined template (covering project mission, architectural principles, AI boundaries, core values).
+3.  **Review and Finalize:** Carefully review the AI-generated draft of `init_context.md`. Refine the content, fill in specific placeholders, and ensure it accurately reflects your project's immutable North-Star context. The AI can help with formatting and structure, but the strategic content requires human validation.
+4.  **Iterative Domain Documentation:** Subsequently, the AI can assist in drafting other key documents (e.g., `cascade/domains/<your-domain>/architecture.md`, `key_decisions.md`) based on discussions, analysis of existing code (if any), or specific requirements you provide. This is an ongoing, collaborative process.
+
+### 1.3 AI Session Initiation & Operational Prompt
+When starting a session with an AI assistant that will use the ContextCascade system, use a comprehensive prompt that ensures the AI loads and adheres to the system's protocols. The following is an ideal structure (refer to the "Most Perfect Prompt" discussion for the full template):
+
+**Core Components of the Initiation Prompt:**
+
+1.  **Mandatory Bootstrap Sequence:** Instruct the AI to read, in order:
+    *   `/cascade/00_BOOTSTRAP.md` (Absolute entry point and startup instructions)
+    *   `/cascade/index.md` (Master file map)
+    *   `/cascade/protocols/loop_protocol.md` (Detailed READ-ACT-WRITE cycle, including logging)
+    *   `/cascade/protocols/file_lifespans.md` (Context freshness and lifecycle rules)
+    *   `/cascade/init_context.md` (Project-specific immutable North-Star context)
+2.  **Ongoing Operational Requirements:** Remind the AI of its continuous duties:
+    *   Strict adherence to `loop_protocol.md` for all tasks.
+    *   Dynamic context loading via load plans.
+    *   Compliance with all file metadata (`@meta` blocks).
+    *   Mandatory job planning in `temp_job.md` before any writes.
+    *   Disciplined logging as per `loop_protocol.md`.
+    *   Adherence to safeguards (`safeguards.md`, `write_gates.md`).
+3.  **The Specific User Task:** Your actual request for the AI.
+
+**Example Snippet (Conceptual - see full version elsewhere):**
+```
+=== CONTEXTCASCADE SYSTEM INITIALIZATION & OPERATIONAL PROTOCOL ===
+
+MANDATORY AI INSTRUCTIONS - PROCESS STRICTLY IN ORDER:
+
+1.  BOOTSTRAP & CORE PROTOCOL INGESTION:
+    A. Critical Read: `/cascade/00_BOOTSTRAP.md`
+    B. Load Master Index: `/cascade/index.md`
+    C. Internalize Operational Loop: `/cascade/protocols/loop_protocol.md`
+    D. Understand Lifespan Policies: `/cascade/protocols/file_lifespans.md`
+    E. Internalize Immutable Project Context: `/cascade/init_context.md`
+
+2.  ONGOING OPERATIONAL REQUIREMENTS:
+    *   Strict Adherence to `loop_protocol.md`...
+    *   Contextual Loading via Load Plans...
+    *   (etc.) ...
+
+3.  CURRENT TASK:
+    *   {INSERT USER PROMPT HERE}
+
+=== END OF CONTEXTCASCADE SYSTEM INITIALIZATION & OPERATIONAL PROTOCOL ===
+```
+This detailed prompt structure is crucial for ensuring the AI operates correctly within the ContextCascade framework. For new projects, the very first "CURRENT TASK" might be to populate `init_context.md` as described in Section 1.2.B.
 Use the following prompt to initialize a Replit AI session using the ContextCascade system:
 ```
 1) !!!IMPORTANT!!! Follow the full bootstrap sequence, including the now critical init_context.md and the very detailed loop_protocol.md.
@@ -959,7 +1015,7 @@ A session begins. The AI:
 ├── 00_BOOTSTRAP.md                      # AI bootstrap file: mandatory first-read (immutable)
 ├── index.md                             # Master index & link map  (structural)
 ├── system_manifest.md                   # Immutable doctrine file (immutable)
-├── init_context.md                      # Immutable North-Star: Foundational project goals, principles, AI boundaries (immutable).
+├── init_context.md                      # Immutable North-Star: Foundational project context. AI-assisted draft, human-finalized.
 ├── protocols/
 │   ├── loop_protocol.md                 # READ → ACT → WRITE flow
 │   ├── file_lifespans.md                # Threshold & maxDepth rules
@@ -998,7 +1054,7 @@ A session begins. The AI:
 ├── domains/
 │   ├── client/
 │   │   └── index.md                     # Client domain index, listing key docs like architecture.md, key_decisions.md.
-│   │   └── *.md                         # Detailed client guidance docs (e.g., architecture, decisions, conventions).
+│   │   └── *.md                         # Detailed client guidance (architecture, decisions, conventions). AI-assisted drafting & maintenance.
 │   ├── server/
 │   │   └── index.md
 │   │   └── *.md
