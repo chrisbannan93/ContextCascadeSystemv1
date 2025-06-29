@@ -1,6 +1,6 @@
 <!-- @meta {
   "fileType": "protected",
-  "purpose": "Defines the structured execution loop used by ContextCascade: READ → ACT → WRITE.",
+  "purpose": "Defines the structured execution loop used by ContextCascade: READ → ACT → WRITE, including job log management.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global"
 } -->
@@ -8,31 +8,61 @@
 <!-- PROTECTED -->
 #### Three-Phase Execution Loop
 This protocol enforces strict sequencing of AI task execution into three non-overlapping phases.
+
 ##### Phase 1 — READ
-- Load context files as defined in the **active load plan** generated during the previous ACT.
-- Perform no mutation or job logic.
-- Validate hashes for all `immutable` or `protected` files.
-- After you read this file in full, read /cascade/protocols/file_lifespans.md next
-##### Phase 2 — ACT
-- Perform reasoning and generate a **job plan** (`temp_job.md`) plus an updated load plan (if needed).
-- Create no file writes.
-##### Phase 3 — WRITE
-- **Pre-WRITE hash check**: verify immutable/protected files still match `integrity_snapshot.md`.
-- Execute the job plan and mutate only allowed files.
-- Recompute hashes and confirm against `expectedHashAfter`.
-- Log deltas to `/cascade/change_log/` and increment lifecycle counters.
-- Abort and enter Safe-Hold if any safeguard fails.
+- Load context files as defined in the **active load plan** generated during the previous ACT phase. This plan is typically found in `/cascade/load_plans/`.
+- Perform no mutation or job logic during this phase.
+- Validate hashes for all `immutable` or `protected` files against `/cascade/audit/integrity_snapshot.md`.
+- After you read this file in full, read `/cascade/protocols/file_lifespans.md` next to understand context refresh policies.
+
+##### Phase 2 — ACT (Plan & Prepare)
+- Based on the loaded context and the user's prompt, perform reasoning.
+- Generate a detailed **job plan** in `/cascade/job_logs/temp_job.md`. This plan outlines the intended changes, target files, and expected outcomes for the WRITE phase. This file is overwritten each cycle.
+- If necessary, generate an updated load plan for the *next* READ phase.
+- Create no file writes or direct modifications to system files during this phase.
+
+##### Phase 3 — WRITE (Execute & Log)
+- **A. Pre-WRITE Validation:**
+    - Verify immutable/protected files still match `/cascade/audit/integrity_snapshot.md` (Pre-WRITE hash check). Abort if mismatch.
+    - Validate the job plan in `/cascade/job_logs/temp_job.md` for structural integrity and adherence to write gates defined in `/cascade/security/write_gates.md`. Abort if invalid.
+- **B. Execute Job Plan:**
+    - Execute the actions defined in `/cascade/job_logs/temp_job.md`.
+    - Mutate only allowed files as specified in the job plan.
+- **C. Post-WRITE Validation:**
+    - Recompute hashes of affected files and confirm against `expectedHashAfter` values from the job plan.
+    - If validation fails, attempt rollback as per job plan or enter Safe-Hold.
+- **D. System Updates & Logging:**
+    - Log change deltas to `/cascade/change_log/recent.md` (and subsequently to `summary.md` as per its rules).
+    - Increment relevant lifecycle counters in `/cascade/lifecycle/`.
+    - Update `/cascade/checkpoints/loop_checkpoint.md`.
+- **E. Job Log Processing (Loop and Sweep Mechanism):**
+    1.  **Summarize Current Job:** Generate a concise summary of the just-completed job from `/cascade/job_logs/temp_job.md` (including intent, key files/outcomes, status, timestamp).
+    2.  **Append to Recent Jobs:** Append this summary as a new entry to `/cascade/job_logs/recent.md`.
+    3.  **Check Recent Jobs Buffer:**
+        *   Count the number of distinct job summaries in `/cascade/job_logs/recent.md`.
+        *   Compare this count to the `maxEntries` value defined in `/cascade/job_logs/recent.md`'s metadata (typically also referenced in `/cascade/job_logs.md`).
+    4.  **Perform Sweep if Buffer is Full:**
+        *   If the count of job summaries in `/cascade/job_logs/recent.md` equals `maxEntries`:
+            *   Read all job summaries currently stored in `/cascade/job_logs/recent.md`.
+            *   Append these summaries (as a batch, maintaining chronological order) to `/cascade/job_logs/summary.md`.
+            *   Clear `/cascade/job_logs/recent.md` of the swept entries (e.g., overwrite it with its initial header comment or an empty state, ready for new entries).
+- **F. Conclude WRITE Phase:**
+    - If any step from A to E results in a critical failure that cannot be resolved, abort the loop and enter Safe-Hold mode as defined in `/cascade/protocols/recovery.md`.
 <!-- END PROTECTED -->
 ---
 #### Loop Entry / Exit
-- **Entry**: Allowed only when no `drift_flag.md` exists.
-- **Exit**: Occurs after a successful WRITE and delta audit.
+- **Entry**: Allowed only when no `drift_flag.md` exists and `/cascade/_locks/active_edit.lock` is not present or is stale and cleared by recovery.
+- **Exit**: Occurs after a successful WRITE phase (including all sub-steps A-F) and successful delta audit.
 #### Safe-Hold Triggers
-- Hash or safeguard failure
-- Stale or conflicting `_locks/active_edit.lock`
-- Missing / malformed `temp_job.md`
+- Hash or safeguard failure during any phase.
+- Stale or conflicting `_locks/active_edit.lock`.
+- Missing, malformed, or invalid `/cascade/job_logs/temp_job.md` at the start of WRITE phase.
+- Failure in job execution or post-WRITE validation that cannot be rolled back.
+- Critical failure during Job Log Processing.
 #### Audit Expectations
-- Each phase transition must be traceable by job ID.
-- Counters must increment exactly once per WRITE.
+- Each phase transition must be traceable by job ID derived from `/cascade/job_logs/temp_job.md`.
+- Lifecycle counters must increment exactly once per successful WRITE cycle.
+- Job log files (`recent.md`, `summary.md`) must reflect the outcomes of all executed jobs.
 #### Maintenance Guidance
-- Never modify PROTECTED sections except via security-reviewed job plans.
+- Never modify PROTECTED sections except via security-reviewed job plans that explicitly detail changes to the core loop protocol.
+- Ensure `/cascade/job_logs.md` and the metadata of `/cascade/job_logs/recent.md` correctly define `maxEntries` for the sweep mechanism.
