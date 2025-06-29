@@ -1,6 +1,6 @@
 <!-- @meta {
   "fileType": "protected",
-  "purpose": "Defines the structured execution loop used by ContextCascade: READ → ACT → WRITE, including job log management.",
+  "purpose": "Defines the structured execution loop used by ContextCascade: READ → ACT → WRITE, including job and change log management.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global"
 } -->
@@ -31,11 +31,20 @@ This protocol enforces strict sequencing of AI task execution into three non-ove
 - **C. Post-WRITE Validation:**
     - Recompute hashes of affected files and confirm against `expectedHashAfter` values from the job plan.
     - If validation fails, attempt rollback as per job plan or enter Safe-Hold.
-- **D. System Updates & Logging:**
-    - Log change deltas to `/cascade/change_log/recent.md` (and subsequently to `summary.md` as per its rules).
-    - Increment relevant lifecycle counters in `/cascade/lifecycle/`.
-    - Update `/cascade/checkpoints/loop_checkpoint.md`.
-- **E. Job Log Processing (Loop and Sweep Mechanism):**
+- **D. System Updates & Initial Logging:**
+    1.  **Log Change Summary:** Generate a concise summary of the changes made during this WRITE phase (e.g., files modified, nature of change, related job ID). Append this summary to `/cascade/change_log/recent.md`.
+    2.  **Increment Counters:** Increment relevant lifecycle counters in `/cascade/lifecycle/`.
+    3.  **Update Checkpoint:** Update `/cascade/checkpoints/loop_checkpoint.md`.
+- **E. Change Log Processing (Loop and Sweep Mechanism):**
+    1.  **Check Recent Changes Buffer:**
+        *   Count the number of distinct change summaries in `/cascade/change_log/recent.md`.
+        *   Compare this count to the `maxEntries` value defined in `/cascade/change_log/recent.md`'s metadata (typically also referenced in `/cascade/change_log.md`).
+    2.  **Perform Sweep if Buffer is Full:**
+        *   If the count of change summaries in `/cascade/change_log/recent.md` equals `maxEntries`:
+            *   Read all change summaries currently stored in `/cascade/change_log/recent.md`.
+            *   Append these summaries (as a batch, maintaining chronological order) to `/cascade/change_log/summary.md`.
+            *   Clear `/cascade/change_log/recent.md` of the swept entries (e.g., overwrite it with its initial header comment or an empty state, ready for new entries).
+- **F. Job Log Processing (Loop and Sweep Mechanism):**
     1.  **Summarize Current Job:** Generate a concise summary of the just-completed job from `/cascade/job_logs/temp_job.md` (including intent, key files/outcomes, status, timestamp).
     2.  **Append to Recent Jobs:** Append this summary as a new entry to `/cascade/job_logs/recent.md`.
     3.  **Check Recent Jobs Buffer:**
@@ -46,23 +55,25 @@ This protocol enforces strict sequencing of AI task execution into three non-ove
             *   Read all job summaries currently stored in `/cascade/job_logs/recent.md`.
             *   Append these summaries (as a batch, maintaining chronological order) to `/cascade/job_logs/summary.md`.
             *   Clear `/cascade/job_logs/recent.md` of the swept entries (e.g., overwrite it with its initial header comment or an empty state, ready for new entries).
-- **F. Conclude WRITE Phase:**
-    - If any step from A to E results in a critical failure that cannot be resolved, abort the loop and enter Safe-Hold mode as defined in `/cascade/protocols/recovery.md`.
+- **G. Conclude WRITE Phase:**
+    - If any step from A to F results in a critical failure that cannot be resolved, abort the loop and enter Safe-Hold mode as defined in `/cascade/protocols/recovery.md`.
 <!-- END PROTECTED -->
 ---
 #### Loop Entry / Exit
 - **Entry**: Allowed only when no `drift_flag.md` exists and `/cascade/_locks/active_edit.lock` is not present or is stale and cleared by recovery.
-- **Exit**: Occurs after a successful WRITE phase (including all sub-steps A-F) and successful delta audit.
+- **Exit**: Occurs after a successful WRITE phase (including all sub-steps A-G) and successful delta audit.
 #### Safe-Hold Triggers
 - Hash or safeguard failure during any phase.
 - Stale or conflicting `_locks/active_edit.lock`.
 - Missing, malformed, or invalid `/cascade/job_logs/temp_job.md` at the start of WRITE phase.
 - Failure in job execution or post-WRITE validation that cannot be rolled back.
-- Critical failure during Job Log Processing.
+- Critical failure during Job Log or Change Log Processing.
 #### Audit Expectations
 - Each phase transition must be traceable by job ID derived from `/cascade/job_logs/temp_job.md`.
 - Lifecycle counters must increment exactly once per successful WRITE cycle.
 - Job log files (`recent.md`, `summary.md`) must reflect the outcomes of all executed jobs.
+- Change log files (`recent.md`, `summary.md`) must reflect all system modifications.
 #### Maintenance Guidance
 - Never modify PROTECTED sections except via security-reviewed job plans that explicitly detail changes to the core loop protocol.
-- Ensure `/cascade/job_logs.md` and the metadata of `/cascade/job_logs/recent.md` correctly define `maxEntries` for the sweep mechanism.
+- Ensure `/cascade/job_logs.md` and the metadata of `/cascade/job_logs/recent.md` correctly define `maxEntries` for their sweep mechanism.
+- Ensure `/cascade/change_log.md` and the metadata of `/cascade/change_log/recent.md` correctly define `maxEntries` for their sweep mechanism.
