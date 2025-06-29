@@ -41,8 +41,16 @@ This index typically lists key files or sub-directories within the `/cascade/dom
 
 **Current Client Domain Index:**
 
-| Path                                   | Role / Description                 |
-|----------------------------------------|------------------------------------|
-| `/cascade/domains/client/README.md`    | Overview of client domain memory   |
+| Path                                           | Role / Description                                                                 | `fileType` (Expected) |
+|------------------------------------------------|------------------------------------------------------------------------------------|-----------------------|
+| `/cascade/domains/client/README.md`            | Overview, purpose, and general guidance for the client domain's Cascade context.   | `permanent`           |
+| `/cascade/domains/client/architecture.md`      | Detailed description of the client-side application architecture.                  | `permanent`           |
+| `/cascade/domains/client/key_decisions.md`     | Log of significant architectural and technical decisions for the client domain.    | `permanent`           |
+| `/cascade/domains/client/conventions.md`       | Coding standards, naming conventions, and style guides specific to client code.  | `permanent`           |
+| `/cascade/domains/client/state_management.md`  | Strategy and patterns for managing client-side state (global and local).         | `permanent`           |
+| `/cascade/domains/client/api_interfaces.md`    | Client-side perspective of API contracts it consumes.                              | `permanent`           |
+| `/cascade/domains/client/testing_strategy.md`  | Guidelines and approach for unit, integration, and E2E testing of client code.   | `permanent`           |
+| `/cascade/domains/client/client_summary.md`    | AI-distilled summary of the current client domain state, key decisions, and issues. | `permanent`           |
+| `/cascade/domains/client/components/`          | Directory for specifications or documentation of reusable UI components.           | (directory)           |
 
-*(Add more entries as client-specific memory files are created.)*
+*(This index should be actively maintained. Add new entries as client-specific memory and guidance files are created or planned.)*
