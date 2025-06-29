@@ -1,49 +1,41 @@
 <!-- @meta {
   "fileType": "structural",
   "subtype": "index",
-  "purpose": "Manifest for change-log buffers; governs rolling retention (recent.md) and archival persistence (summary.md).",
+  "purpose": "Manifest for change log files; defines the lifecycle of change information from recent activity to a permanent archive using a 'loop and sweep' mechanism.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global",
   "mergeTarget": "change_log/summary.md",
   "maxEntries": 7
 } -->
 ### /cascade/change_log.md
-> **Role:** Describes how the cascade records recent WRITE-phase activity while preserving a permanent audit trail. It links two sibling buffers:
-> * **`recent.md`** – short-window rolling log (token-lean)
-> * **`summary.md`** – permanent append-only archive
+> **Role:** Defines the structured process for logging summaries of changes made during each WRITE phase. This system ensures both recent visibility and long-term archival. It involves two key files:
+> * **`change_log/recent.md`**: A buffer that collects summaries of recent changes. Once it reaches `maxEntries` (e.g., 7 changes), its contents are swept to `change_log/summary.md`.
+> * **`change_log/summary.md`**: A permanent, append-only archive of all change summaries, providing a complete historical record.
 ---
-#### Active Buffers
-| File          | Class    | Retention        | Notes                                   |
-|---------------|----------|------------------|-----------------------------------------|
-| `recent.md`   | rolling  | last **7** loops | Evicts FIFO; entries merged to archive  |
-| `summary.md`  | archive  | infinite         | Append-only; never overwritten          |
+#### Change Log Files & Lifecycle
+| File Path                | Role & Behavior                                                                                                              | Max Entries (if applicable) | Edit Policy      |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------------|-----------------------------|------------------|
+| `change_log/recent.md`   | Buffer for summaries of recent changes. Appended to after each relevant WRITE operation. When full, all entries are swept to `summary.md` and this file is cleared. | 7 (as per metadata)         | `appendOnly`     |
+| `change_log/summary.md`  | Permanent append-only archive. Receives batches of change summaries from `recent.md`.                                          | N/A                         | `appendOnly`     |
+
 ---
-#### Buffer Rules
-**Recent Buffer (`recent.md`)**
-- `maxEntries`: **7** (also declared in metadata above)
-- Overflow behaviour: oldest row copied to `summary.md`, then removed here.
-- Edit policy: **appendOnly** (system-enforced)
-**Archive (`summary.md`)**
-- Unlimited length; append-only ledger.
-- Accepts flushed rows from `recent.md` in chronological order.
-- Validated for monotonic timestamps during merge.
+#### Buffer Management for `change_log/recent.md`
+- **Population**: After a WRITE phase successfully completes and makes modifications, a summary of those changes (e.g., files affected, nature of change, job ID if applicable, timestamp) is appended as a new entry to `change_log/recent.md`.
+- **`maxEntries`**: The metadata field `maxEntries` (e.g., 7) in this file (`change_log.md`) and/or in `change_log/recent.md` defines the capacity of the recent changes buffer.
+- **Sweep Operation (Trigger for Archival)**:
+    1. This operation is triggered when the number of change summaries in `change_log/recent.md` reaches `maxEntries`.
+    2. All accumulated change summaries are read from `change_log/recent.md`.
+    3. These summaries are then appended in chronological order to `change_log/summary.md`.
+    4. `change_log/recent.md` is then cleared of these entries (e.g., overwritten with its initial header or an empty state) to begin collecting the next batch of change summaries.
+- **Edit Policy**: `change_log/recent.md` is `appendOnly` for individual change summaries. The sweep and clear operation is a system-level action.
+
 ---
-#### Merge Triggers
-- Automatic when `recent.md` reaches `maxEntries`.
-- Manual when a job plan sets `forceMerge: true`.
-- Policy-driven when a domain hits `merge_threshold` in `/protocols/file_lifespans.md`.
+#### `change_log/summary.md`
+- **Integrity**: This file is strictly append-only to maintain a tamper-evident historical record of all system modifications.
+- **Content**: Contains all change summaries that have been swept from `change_log/recent.md`. Timestamps or sequential IDs should ensure chronological order.
+
 ---
-#### Enforcement Pathway
-READ → ACT(plan_refresh_phase) → WRITE(handle_merge_phase)
-│ │
-└─ if merge required ──────────────┘
-- Merge outcomes logged to `/audit/meta_audit.md`.
-- Failure to flush after 1 loop raises `/lifecycle/drift_flag.md`.
+#### Guiding Principles for AI
+- The AI must follow the operational protocol defined in `/cascade/protocols/loop_protocol.md` for updating these change log files during the WRITE phase.
+- The sweep from `change_log/recent.md` to `change_log/summary.md` is a critical step for maintaining context efficiency (by keeping `recent.md` lean) and ensuring historical integrity.
 ---
-#### Maintenance Guidance
-- **Do not** edit existing rows; only appends allowed.
-- Keep timestamps in **ISO-8601 UTC** for validator compatibility.
-- Bulk migrations to external storage must update this manifest.
----
-#### Summary
-This manifest keeps the change-log pipeline healthy: a small, token-efficient window for day-to-day debugging and an immutable archive for deep forensic or compliance review. Maintain `maxEntries` conservatively to balance visibility against token budget.
