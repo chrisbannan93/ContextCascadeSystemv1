@@ -1,23 +1,25 @@
 <!-- @meta {
   "fileType": "append-only",
-  "purpose": "A permanent, append-only historical log of all job plan summaries, including those rolled over from job_logs/recent.md.",
+  "purpose": "A permanent, append-only historical log of all job plan summaries. It receives batches of summaries from the 'recent.md' buffer.",
   "editPolicy": "appendOnly",
   "routeScope": "global"
 } -->
 # Job Logs Summary
 
-This file is an append-only historical ledger of all executed job plan summaries. It includes entries merged from `/cascade/job_logs/recent.md` when that buffer reaches its `maxEntries` limit.
+This file is an append-only historical ledger of all executed job plan summaries. Its primary role is to serve as a long-term archive.
+
+It receives **batches of job summaries** that are "swept" from `/cascade/job_logs/recent.md` when that buffer reaches its `maxEntries` capacity. This ensures that `summary.md` grows chronologically with sets of recent activities.
 
 ---
 ## Guidelines
-- Entries are added chronologically.
-- Existing entries must not be modified or deleted.
-- Each entry should provide a concise summary of an executed job plan, typically including:
-    - Job ID or reference to the original `temp_job.md` (e.g., its hash or timestamp).
+- Entries (which are typically batches of summaries from `recent.md`) are appended chronologically.
+- Existing content in this file must not be modified or deleted to maintain historical integrity.
+- Each job summary within a batch should provide a concise record of an executed job plan, typically including:
+    - Job ID (e.g., timestamp, unique hash of the plan, or sequential number).
     - The stated `intent` of the job.
-    - A list of key files targeted by the job.
+    - Key files affected or key outcomes.
     - The final `status` of the job (e.g., success, failure, rolled_back).
-    - Timestamp of execution.
+    - Timestamp of completion.
 
 ---
-*(No job summaries yet)*
+*(No job summaries yet. This file will be populated with batches of job summaries swept from /cascade/job_logs/recent.md.)*

@@ -151,7 +151,7 @@ User Prompt ──► Replit AI ──► /cascade/00_BOOTSTRAP.md (entrypoint o
              Token Budget Awareness, Refresh Policy, Change Logs
 ```
 
-This diagram illustrates the AI's movement through context files in a structured loop. Load plans and lifecycle counters dynamically inform which files must be read on each pass. Temporary buffers like `temp_job.md` and rolling logs such as `recent.md` support memory efficiency and change traceability.
+This diagram illustrates the AI's movement through context files in a structured loop. Load plans and lifecycle counters dynamically inform which files must be read on each pass. Temporary buffers like `/cascade/job_logs/temp_job.md` (which holds the current job plan) and specialized rolling logs like `/cascade/job_logs/recent.md` (which buffers recent job summaries before a sweep to an archive) support memory efficiency and change traceability.
 
 ### 2.5 Core Feature Index
 The list below enumerates **every first‑class feature** in ContextCascade. Subsequent sections will break down each in depth.
@@ -231,9 +231,12 @@ This configuration signals that the file is a live index (`cascade/index.md`), e
 **Where**: Enforced at startup via `index.md`, and fully documented in `protocols/loop_protocol.md`. Used implicitly every cycle across all cascade contexts.
 **How**:
 - **READ**: Loads specified files into context per active load_plan, validated metadata, and mode (Lean/Domain/Full). Only allowed after a valid bootstrap step via 00_BOOTSTRAP.md.
-- **ACT**: Applies logic or reasoning to the loaded data—may result in draft file changes, job plan generation, counter updates.
-- **WRITE**: Applies edits, enforces editPolicy, performs hash validations, and updates logs like `loop_checkpoint.md`, `meta_audit.md`.
-**Example Use Case**: Use Case: A prompt requests system audit cleanup. During READ, it loads prune_plan.md, recent change logs, and lifecycle counters. In ACT, it detects threshold crossings and compiles a cleanup intent file (`job_logs/temp_job.md`). In WRITE, it removes expired buffers, appends to the summary log, and updates counters while verifying protected blocks remain untouched.
+- **ACT**: Applies logic or reasoning to the loaded data—may result in draft file changes, job plan generation (in `/cascade/job_logs/temp_job.md`), counter updates.
+- **WRITE**: Applies edits as per the job plan in `/cascade/job_logs/temp_job.md`, enforces `editPolicy`, performs hash validations, updates system logs like `/cascade/checkpoints/loop_checkpoint.md` and `/cascade/audit/meta_audit.md`, processes change logs (e.g. `/cascade/change_log/recent.md`), and manages job logs through a 'summarize, append to recent, and sweep to summary' mechanism as detailed in `/cascade/protocols/loop_protocol.md`.
+**Example Use Case**: A prompt requests a feature addition.
+- During READ, relevant domain specs, current state, and `loop_protocol.md` are loaded.
+- In ACT, the AI reasons about the changes and generates a detailed plan in `/cascade/job_logs/temp_job.md`, including target files, code diffs, and expected outcomes.
+- In WRITE, the system validates `temp_job.md`, applies the changes to code files, updates documentation, logs the job outcome to `/cascade/job_logs/recent.md` (potentially triggering a sweep to `summary.md`), logs changes to `/cascade/change_log/recent.md`, and increments lifecycle counters.
 ---
 
 ### 2.5.4 **Load Modes**
@@ -291,14 +294,15 @@ In the next loop, this Load Plan ensures only these scoped files are loaded, pre
 **Example Use Case**: If `schema_tick.md` exceeds 10, the file lifespan policy might trigger a `reread` of `domain_spec/schema.md`, a `prune` of unused `temp_notes/`, and a `merge` of any append-only logs tied to schema changes. This keeps the schema branch concise and performant without full reloads each cycle.
 
 ### 2.5.8 **Rolling Buffers**
-**What**: A class of files that maintain a fixed number of recent entries, providing a sliding-window view of recent activity or thought processes.
-**Why**: Ensures continuity of short-term context without overwhelming token limits. These buffers preserve the most relevant interactions while evicting older data automatically, optimizing for recall and cost.
-**Where**: Common examples include `change_log/recent.md`, `_taskbuffers/tmp_note.md`, and `temp_notes/…`. These files typically appear under logs or ephemeral notes directories.
-**How**: Controlled via metadata fields such as:
-- `fileType: rolling`
-- `maxEntries: N`
-- `editPolicy: appendOnly` The system enforces FIFO (First-In-First-Out) eviction after each WRITE phase. When the number of entries exceeds `maxEntries`, the oldest lines or sections are removed to maintain size.
-**Example Use Case**: During a weeklong dev sprint, the AI writes daily notes to `temp_notes/dev_checkins.md`. It’s marked with:
+**What**: A class of files that maintain a limited number of recent entries, providing a sliding-window view of recent activity or thought processes.
+**Why**: Ensures continuity of short-term context without overwhelming token limits. These buffers preserve the most relevant interactions while managing data lifecycle, optimizing for recall and cost.
+**Where**: Common examples include `/cascade/change_log/recent.md`, `/cascade/job_logs/recent.md`, and various files in `/cascade/temp_notes/`. These files typically appear under logs or ephemeral notes directories.
+**How**: Controlled via metadata fields such as `fileType: rolling`, `maxEntries: N`, and `editPolicy: appendOnly`. The specific behavior when `maxEntries` is reached can vary:
+- **FIFO Eviction**: For some general-purpose rolling buffers, the system may enforce First-In-First-Out (FIFO) eviction, where the oldest individual entry is removed to make space for a new one.
+- **Collect and Sweep**: For critical logs like `/cascade/job_logs/recent.md` (and potentially `/cascade/change_log/recent.md`), a 'collect and sweep' mechanism is used. The buffer collects up to `maxEntries` summaries. Once full, the entire batch of N entries is appended to a corresponding archive (e.g., `/cascade/job_logs/summary.md`), and the `recent.md` buffer is then cleared to start collecting new entries. This process is detailed in `/cascade/protocols/loop_protocol.md` and the relevant manifest files (e.g., `/cascade/job_logs.md`).
+The choice of mechanism depends on the nature of the data and the requirements for its archival.
+**Example Use Case (Collect and Sweep for Job Logs)**: `/cascade/job_logs/recent.md` is marked with `maxEntries: 5`. After five jobs are completed and their summaries appended, all five summaries are moved to `/cascade/job_logs/summary.md`, and `job_logs/recent.md` is cleared.
+**Example Use Case (FIFO for generic notes)**: `temp_notes/dev_sprint_notes.md` might be a rolling buffer with `maxEntries: 10` using FIFO. When the 11th note is added, the 1st (oldest) note is discarded. It’s marked with:
 <!-- @meta
 {
   "fileType": "rolling",
@@ -501,11 +505,12 @@ This ensures that the actual cascade state aligns with planned WRITE results and
 **What**: Ephemeral planning artifacts created during the ACT phase to define the intended actions, scope, and safety constraints of a WRITE operation. These are stored in structured markdown format (`temp_job.md`) and serve as the authoritative contract for what changes the system is about to execute.\
 **Why**: Introduces a layer of traceability and intentionality to the cascade’s WRITE operations. Job plans record the AI’s proposed logic in advance, enable human or system confirmation, and anchor rollback and audit tooling through embedded hashes and metadata.\
 **Where**:
-- Written to `job_logs/temp_job.md` during ACT.
+- Written to `job_logs/temp_job.md` during ACT. This file is typically overwritten each cycle.
 - Can also appear as `temp_job_*.md` during multi-stage plans or sandboxed proposals.
-- Referenced by `meta_audit.md`, `change_log/recent.md`, and security tools.\
+- After successful execution, a summary of the job from `temp_job.md` is logged to `/cascade/job_logs/recent.md`.
+- Referenced by `/cascade/audit/meta_audit.md` and security tools.\
   **How**:
-- Automatically generated during the ACT phase for any WRITE-bearing task.
+- Automatically generated in `/cascade/job_logs/temp_job.md` during the ACT phase for any WRITE-bearing task.
 - The job plan includes:
   - Target file paths
   - Justification or triggering prompt
@@ -970,10 +975,12 @@ A session begins. The AI:
 │   ├── security.md                      # Security events counter
 │   └── drift_flag.md                    # Unresolved contradiction counter
 ├── change_log/
-│   ├── recent.md                        # Rolling log (max 7 entries)
-│   └── summary.md                       # Append-only historical log
+│   ├── recent.md                        # Rolling log of recent change summaries (e.g., max 7 entries, then swept or FIFO).
+│   └── summary.md                       # Append-only historical log of all changes.
 ├── job_logs/
-│   └── temp_job.md                      # Ephemeral job plan + PRE hashes
+│   ├── temp_job.md                      # Ephemeral plan for the current job (overwritten each cycle).
+│   ├── recent.md                        # Buffer for N recent job summaries, swept to summary.md when full.
+│   └── summary.md                       # Append-only archive of all swept job summaries.
 ├── load_plans/                          # Evictable read-plan cache
 │   └── *.md
 ├── _taskbuffers/                        # One-prompt scratch buffers
@@ -1334,7 +1341,7 @@ This file captures static boot context — background assumptions, goals, or per
 ### 5.5.1 /cascade/protocols/loop_protocol.md
 <!-- @meta {
   "fileType": "protected",
-  "purpose": "Defines the structured execution loop used by ContextCascade: READ → ACT → WRITE.",
+  "purpose": "Defines the structured execution loop used by ContextCascade: READ → ACT → WRITE, including job log management.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global"
 } -->
@@ -1342,33 +1349,64 @@ This file captures static boot context — background assumptions, goals, or per
 <!-- PROTECTED -->
 #### Three-Phase Execution Loop
 This protocol enforces strict sequencing of AI task execution into three non-overlapping phases.
+
 ##### Phase 1 — READ
-- Load context files as defined in the **active load plan** generated during the previous ACT.
-- Perform no mutation or job logic.
-- Validate hashes for all `immutable` or `protected` files.
-##### Phase 2 — ACT
-- Perform reasoning and generate a **job plan** (`temp_job.md`) plus an updated load plan (if needed).
-- Create no file writes.
-##### Phase 3 — WRITE
-- **Pre-WRITE hash check**: verify immutable/protected files still match `integrity_snapshot.md`.
-- Execute the job plan and mutate only allowed files.
-- Recompute hashes and confirm against `expectedHashAfter`.
-- Log deltas to `/cascade/change_log/` and increment lifecycle counters.
-- Abort and enter Safe-Hold if any safeguard fails.
+- Load context files as defined in the **active load plan** generated during the previous ACT phase. This plan is typically found in `/cascade/load_plans/`.
+- Perform no mutation or job logic during this phase.
+- Validate hashes for all `immutable` or `protected` files against `/cascade/audit/integrity_snapshot.md`.
+- After you read this file in full, read `/cascade/protocols/file_lifespans.md` next to understand context refresh policies.
+
+##### Phase 2 — ACT (Plan & Prepare)
+- Based on the loaded context and the user's prompt, perform reasoning.
+- Generate a detailed **job plan** in `/cascade/job_logs/temp_job.md`. This plan outlines the intended changes, target files, and expected outcomes for the WRITE phase. This file is overwritten each cycle.
+- If necessary, generate an updated load plan for the *next* READ phase.
+- Create no file writes or direct modifications to system files during this phase.
+
+##### Phase 3 — WRITE (Execute & Log)
+- **A. Pre-WRITE Validation:**
+    - Verify immutable/protected files still match `/cascade/audit/integrity_snapshot.md` (Pre-WRITE hash check). Abort if mismatch.
+    - Validate the job plan in `/cascade/job_logs/temp_job.md` for structural integrity and adherence to write gates defined in `/cascade/security/write_gates.md`. Abort if invalid.
+- **B. Execute Job Plan:**
+    - Execute the actions defined in `/cascade/job_logs/temp_job.md`.
+    - Mutate only allowed files as specified in the job plan.
+- **C. Post-WRITE Validation:**
+    - Recompute hashes of affected files and confirm against `expectedHashAfter` values from the job plan.
+    - If validation fails, attempt rollback as per job plan or enter Safe-Hold.
+- **D. System Updates & Logging:**
+    - Log change deltas to `/cascade/change_log/recent.md` (and subsequently to `summary.md` as per its rules).
+    - Increment relevant lifecycle counters in `/cascade/lifecycle/`.
+    - Update `/cascade/checkpoints/loop_checkpoint.md`.
+- **E. Job Log Processing (Loop and Sweep Mechanism):**
+    1.  **Summarize Current Job:** Generate a concise summary of the just-completed job from `/cascade/job_logs/temp_job.md` (including intent, key files/outcomes, status, timestamp).
+    2.  **Append to Recent Jobs:** Append this summary as a new entry to `/cascade/job_logs/recent.md`.
+    3.  **Check Recent Jobs Buffer:**
+        *   Count the number of distinct job summaries in `/cascade/job_logs/recent.md`.
+        *   Compare this count to the `maxEntries` value defined in `/cascade/job_logs/recent.md`'s metadata (typically also referenced in `/cascade/job_logs.md`).
+    4.  **Perform Sweep if Buffer is Full:**
+        *   If the count of job summaries in `/cascade/job_logs/recent.md` equals `maxEntries`:
+            *   Read all job summaries currently stored in `/cascade/job_logs/recent.md`.
+            *   Append these summaries (as a batch, maintaining chronological order) to `/cascade/job_logs/summary.md`.
+            *   Clear `/cascade/job_logs/recent.md` of the swept entries (e.g., overwrite it with its initial header comment or an empty state, ready for new entries).
+- **F. Conclude WRITE Phase:**
+    - If any step from A to E results in a critical failure that cannot be resolved, abort the loop and enter Safe-Hold mode as defined in `/cascade/protocols/recovery.md`.
 <!-- END PROTECTED -->
 ---
 #### Loop Entry / Exit
-- **Entry**: Allowed only when no `drift_flag.md` exists.
-- **Exit**: Occurs after a successful WRITE and delta audit.
+- **Entry**: Allowed only when no `drift_flag.md` exists and `/cascade/_locks/active_edit.lock` is not present or is stale and cleared by recovery.
+- **Exit**: Occurs after a successful WRITE phase (including all sub-steps A-F) and successful delta audit.
 #### Safe-Hold Triggers
-- Hash or safeguard failure
-- Stale or conflicting `_locks/active_edit.lock`
-- Missing / malformed `temp_job.md`
+- Hash or safeguard failure during any phase.
+- Stale or conflicting `_locks/active_edit.lock`.
+- Missing, malformed, or invalid `/cascade/job_logs/temp_job.md` at the start of WRITE phase.
+- Failure in job execution or post-WRITE validation that cannot be rolled back.
+- Critical failure during Job Log Processing.
 #### Audit Expectations
-- Each phase transition must be traceable by job ID.
-- Counters must increment exactly once per WRITE.
+- Each phase transition must be traceable by job ID derived from `/cascade/job_logs/temp_job.md`.
+- Lifecycle counters must increment exactly once per successful WRITE cycle.
+- Job log files (`recent.md`, `summary.md`) must reflect the outcomes of all executed jobs.
 #### Maintenance Guidance
-- Never modify PROTECTED sections except via security-reviewed job plans.
+- Never modify PROTECTED sections except via security-reviewed job plans that explicitly detail changes to the core loop protocol.
+- Ensure `/cascade/job_logs.md` and the metadata of `/cascade/job_logs/recent.md` correctly define `maxEntries` for the sweep mechanism.
 
 ### 5.5.2 /cascade/protocols/file_lifespans.md
 <!-- @meta {
@@ -1684,38 +1722,46 @@ This manifest keeps the change-log pipeline healthy: a small, token-efficient wi
 
 ### 5.6 /cascade/change_log.md
 <!-- @meta {
-  "fileType": "policy",
+  "fileType": "structural",
   "subtype": "index",
-  "purpose": "Manifest for job-log buffers; governs retention of recent job plans and their archival into a permanent ledger.",
+  "purpose": "Manifest for job-log files; defines the lifecycle of job information from current planning, to recent history, to a permanent archive.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global",
   "mergeTarget": "job_logs/summary.md",
   "maxEntries": 5
 } -->
 ### /cascade/job_logs.md
-> **Role:** Tracks every WRITE-phase job plan.  
-> * **`recent.md`** – rolling buffer (last 5 jobs).  
-> * **`summary.md`** – infinite, append-only archive.
+> **Role:** Defines the structured process for logging AI job plans and their outcomes. This involves three key files:
+> * **`temp_job.md`**: Contains the plan for the single, currently active or most recently defined job. It is overwritten with each new job.
+> * **`job_logs/recent.md`**: A buffer that collects summaries of recently completed jobs. Once it reaches `maxEntries` (e.g., 5 jobs), its contents are swept to `job_logs/summary.md`.
+> * **`job_logs/summary.md`**: A permanent, append-only archive of all job summaries, providing a complete historical record.
 ---
-#### Active Buffers
-| File            | Class    | Retention (loops) | Notes                                  |
-|-----------------|----------|-------------------|----------------------------------------|
-| `recent.md`     | rolling  | **5**             | FIFO; overflows merge into archive     |
-| `summary.md`    | archive  | ∞ (append-only)   | Permanent ledger of all executed jobs  |
+#### Job Log Files & Lifecycle
+| File Path               | Role & Behavior                                                                                                | Max Entries (if applicable) | Edit Policy      |
+|-------------------------|----------------------------------------------------------------------------------------------------------------|-----------------------------|------------------|
+| `temp_job.md`           | Current job plan; overwritten each cycle by the AI during the ACT phase.                                       | 1 (conceptual)              | `overwrite`      |
+| `job_logs/recent.md`    | Buffer for summaries of recently completed jobs. Appended to after each job. When full, all entries are swept to `summary.md` and this file is cleared. | 5 (as per metadata)         | `appendOnly`     |
+| `job_logs/summary.md`   | Permanent append-only archive. Receives batches of job summaries from `recent.md`.                               | N/A                         | `appendOnly`     |
+
 ---
-#### Buffer Rules
-**`recent.md`**  
-- `maxEntries`: **5** (also set in metadata).  
-- Overflow: oldest row copied to `summary.md`, then evicted.  
-- Edit policy: `appendOnly`; system controls eviction.
-**`summary.md`**  
-- Append-only, chronological order.  
-- Accepts rows flushed from `recent.md`.  
-- Validator enforces monotonic timestamps + unique `jobId`.
+#### Buffer Management for `job_logs/recent.md`
+- **Population**: After a job defined in `temp_job.md` is successfully completed, a summary of that job (intent, key outcomes, status) is appended as a new entry to `job_logs/recent.md`.
+- **`maxEntries`**: The metadata field `maxEntries` (e.g., 5) in this file (`job_logs.md`) and/or in `job_logs/recent.md` defines the capacity of the recent jobs buffer.
+- **Sweep Operation (Trigger for Archival)**:
+    1. This operation is triggered when the number of job summaries in `job_logs/recent.md` reaches `maxEntries`.
+    2. All accumulated job summaries are read from `job_logs/recent.md`.
+    3. These summaries are then appended in chronological order to `job_logs/summary.md`.
+    4. `job_logs/recent.md` is then cleared of these entries (e.g., overwritten with its initial header or an empty state) to begin collecting the next batch of job summaries.
+- **Edit Policy**: `job_logs/recent.md` is `appendOnly` for individual job summaries. The sweep and clear operation is a system-level action.
+
 ---
-#### Merge Triggers
-1. `recent.md` exceeds **5** entries.  
-2. Job plan sets `forceMerge: true`.  
-3. Domain hits `merge_threshold` (see `/protocols/file_lifespans.md`).
+#### `job_logs/summary.md`
+- **Integrity**: This file is strictly append-only to maintain a tamper-evident historical record.
+- **Content**: Contains all job summaries that have been swept from `job_logs/recent.md`. Timestamps or sequential job IDs should ensure chronological order.
+
 ---
-#### Enforcement Flow
+#### Guiding Principles for AI
+- The AI must follow the operational protocol defined in `/cascade/protocols/loop_protocol.md` for updating these job log files.
+- `temp_job.md` is the source for the current job's execution and its subsequent summarization into `job_logs/recent.md`.
+- The sweep from `job_logs/recent.md` to `job_logs/summary.md` is a critical step for maintaining context efficiency and historical integrity.
+---
