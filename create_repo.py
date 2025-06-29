@@ -2,8 +2,2400 @@ import os
 import pathlib
 
 # Define the repository structure and file contents
-# This dictionary will be populated by subsequent calls
 REPO_FILES = {}
+
+# Helper function to add content to REPO_FILES
+def add_file_content(path, content):
+    REPO_FILES[path] = content.strip()
+
+# Populate REPO_FILES with all specified file contents
+
+# Root directory files
+add_file_content("README.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "High-level overview and quickstart reference for the ContextCascade repository.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global"
+} -->
+# Context Cascade
+
+## 🚀 Overview
+
+**Context Cascade** is a robust, modular, file-based memory and protocol system designed to augment persistent context management for AI coding assistants. Its primary aim is addressing memory limitations common in environments like Replit by externalizing architectural, behavioral, and decision-making context into clearly structured markdown files.
+
+This structured external memory system enforces consistency, traceability, and durability of context across prompts, effectively bridging the gap between short-term ephemeral AI memory and long-term project coherence.
+
+---
+
+## 🎯 Key Problems Solved
+
+Traditional AI coding assistants often encounter critical issues, including:
+
+- Loss of architectural coherence across prompts
+- Redundant component regeneration
+- Architectural drift and inconsistencies
+- Misaligned assumptions causing bugs
+- Token budget constraints leading to memory management issues
+
+Context Cascade systematically addresses these issues through an external memory approach that captures and maintains critical context externally.
+
+---
+
+## 📂 Directory Structure
+
+```plaintext
+/cascade/
+├── 00_BOOTSTRAP.md                  # Entry-point enforcing protocol startup (immutable)
+├── index.md                         # Master file map (structural)
+├── system_manifest.md               # Immutable system doctrine (immutable)
+├── protocols/
+│   ├── loop_protocol.md             # READ → ACT → WRITE loop rules
+│   └── file_lifespans.md            # Lifecycle refresh policies
+├── lifecycle/                       # Domain counters and drift flags
+├── change_log/                      # Rolling and historical logs
+├── job_logs/                        # Ephemeral job planning logs
+├── load_plans/                      # Scoped context-loading blueprints
+├── audit/                           # Integrity, consistency, and security audits
+├── domains/                         # Domain-specific guidance and routing
+├── security/                        # Access control and write protection
+├── checkpoints/                     # Loop execution checkpoints
+└── validators/                      # Metadata and schema validation
+```
+
+---
+
+## ⚙️ Core Principles
+
+### 🔄 Read → Act → Write Loop
+
+The disciplined three-phase operational cycle:
+
+- **READ**: Load contextual files and validate metadata.
+- **ACT**: Logical reasoning and preparation of intended changes.
+- **WRITE**: Apply changes securely, with comprehensive validation.
+
+### 📚 Metadata Enforcement
+
+Structured JSON metadata headers define file behavior, lifecycle rules, and validation requirements, ensuring consistent treatment and system integrity.
+
+### 🚦 Lifecycle Management
+
+Automated lifecycle counters and policies manage context freshness, prune expired data, and maintain memory efficiency.
+
+### 🔐 Security and Integrity
+
+SHA-256 hashing, immutable files, protected sections, and rigorous validation prevent unauthorized modifications and detect unintended changes.
+
+### 🌐 Domain Routing
+
+Files and actions are scoped by logical domains (e.g., client, server, schema) to optimize token budget use and maintain clear boundaries.
+
+---
+
+## 🚧 Getting Started
+
+1. **Bootstrap Initialization**
+
+   - Every session begins by reading `00_BOOTSTRAP.md`.
+
+2. **Core Files**
+
+   - Explore the system’s structure via `/cascade/index.md`.
+   - Review system rules in `/cascade/system_manifest.md`.
+
+3. **Loop Protocol**
+
+   - Study `/protocols/loop_protocol.md` to fully understand the operation cycle.
+
+---
+
+## 🛠 Placeholder Use Cases
+
+### ✅ Bootstrap Example
+
+A new Replit session initializes by first reading `00_BOOTSTRAP.md`, validating file hashes, and establishing baseline integrity before proceeding to user prompts.
+
+### ✅ Lean-mode Query Example
+
+AI reads only minimal necessary context from `index.md` to handle a lightweight query, optimizing token efficiency.
+
+### ✅ Domain Extension Example
+
+Developers introduce new domains through secure processes involving job plans, validator approvals, and updates to `system_manifest.md`.
+
+---
+
+## 🧩 Canonical File Types
+
+- `permanent`
+- `immutable`
+- `rolling`
+- `append-only`
+- `temporary`
+- `counter`
+- `evictable`
+- `protected`
+- `structural`
+
+These types govern lifecycle behaviors, memory management, and operational rules.
+
+---
+
+## 🔗 Contributions and Extensions
+
+- New file types, domains, or lifecycle counters follow a strict extension pattern workflow, involving validation, approval, and secure implementation.
+- Contributions must pass rigorous metadata validation (`validators/metadata_validator.md`).
+
+### 🧪 Validator Setup
+
+The metadata validator requires Node.js and `npm`.
+
+1. Run `npm install` from the repository root to install `ts-node` and TypeScript.
+2. Execute `npm run validate -- <path/to/file>` to check a file's metadata block.
+
+---
+
+## 📖 Documentation
+
+Comprehensive documentation is available throughout the `/cascade/` directory, particularly in the `protocols/` and `audit/` subdirectories.
+
+---
+
+## 📮 Contact
+
+For further details or collaboration, reach out to the maintainer at:
+
+- **Email**: [chrisbannan93@gmail.com](mailto:chrisbannan93@gmail.com)
+
+---
+
+## 📌 License
+
+Refer to the repository's `LICENSE` file for licensing details.
+
+---
+""")
+
+add_file_content("package.json", """\
+{
+  "name": "contextcascade",
+  "version": "1.0.0",
+  "description": "Utilities for the ContextCascade memory system",
+  "scripts": {
+    "validate": "ts-node cascade/validators/metadata_validator.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.0.0",
+    "typescript": "^4.0.0"
+  }
+}
+""")
+
+# /cascade/ files
+add_file_content("cascade/00_BOOTSTRAP.md", """\
+<!-- @meta {
+  "fileType": "immutable",
+  "purpose": "Bootstrap file enforcing protocol startup, scope discipline, and memory system entry constraints.",
+  "editPolicy": "readonly"
+} -->
+# ContextCascade Bootstrap Guide
+Welcome. This file is the required entrypoint for using the ContextCascade memory system. Before any task, you must:
+
+## Mandatory Protocol (Follow Exactly)
+- Read `/cascade/index.md` (map)
+- Read `/cascade/protocols/loop_protocol.md` (loop rules)
+- Respect all `@meta` blocks
+- Check `/cascade/protocols/file_lifespans.md` and any `/cascade/lifecycle/*.md` counters
+- Do not ACT or WRITE until READ phase is fully complete
+- Never edit `<!-- PROTECTED -->` sections
+- If any `immutable` file fails hash check → halt, log to `/audit/meta_audit.md`, skip WRITE
+
+---
+## Scope Rules (Memory vs. App)
+- ContextCascade only stores memory, plans, counters, protocols, and logs
+- Do not write `.md` files in Cascade that describe or duplicate app logic
+- All application code or assets belong in the app repo, outside `/cascade/`
+- Only create `.md` files here if storing durable reasoning or system governance
+
+---
+## Summary
+If it’s not memory, constraint, protocol, or trace —
+→ it doesn’t belong in Cascade.
+
+Proceed to `/cascade/index.md`.
+""")
+
+add_file_content("cascade/index.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Master index and routing map for all Cascade memory domains and protocol infrastructure.",
+  "editPolicy": "appendOnly",
+  "routeScope": "global"
+} -->
+# Cascade Index Map
+
+| Path | Role |
+|------|------|
+| `/cascade/00_BOOTSTRAP.md` | System entrypoint (immutable) |
+| `/cascade/protocols/loop_protocol.md` | READ → ACT → WRITE enforcement |
+| `/cascade/protocols/file_lifespans.md` | Refresh thresholds (by domain) |
+| `/cascade/change_log/recent.md` | Rolling buffer (max 7) |
+| `/cascade/change_log/summary.md` | Permanent history ledger |
+| `/cascade/lifecycle/counter.md` | Tick counter (global WRITE count) |
+| `/cascade/lifecycle/*.md` | Domain write counters |
+| `/cascade/load_plans/` | AI‑generated read plans (evictable) |
+| `/cascade/job_logs/temp_job.md` | Temporary WRITE plan (1‑cycle TTL) |
+
+---
+## Notes
+- This index is editable; append rows as domains expand.
+- Reference only files that comply with `@meta` and loop discipline.
+- `/cascade/` is structured memory; do not store application logic here.
+""")
+
+add_file_content("cascade/system_manifest.md", """\
+<!-- @meta {
+  "fileType": "immutable",
+  "purpose": "Declarative list of active Cascade memory domains and their root paths.",
+  "editPolicy": "readonly",
+  "routeScope": "global"
+} -->
+# ContextCascade System Manifest
+
+| Domain | Root Path | Purpose |
+|--------|-----------|---------|
+| core | `/cascade/` | Protocols, logs, counters, global memory |
+| client | `/cascade/client/` | Client‑specific memory (optional) |
+| server | `/cascade/server/` | Server‑side memory (optional) |
+| schema | `/cascade/schema/` | Schema and validation rules |
+| load_plans | `/cascade/load_plans/` | Evictable AI read plans |
+| job_logs | `/cascade/job_logs/` | Temporary job state (TTL 1 cycle) |
+| lifecycle | `/cascade/lifecycle/` | Domain counters (refresh triggers) |
+| audit | `/cascade/audit/` | Integrity and hash audit logs (optional) |
+
+---
+## Notes
+- Keep rows alphabetised for quick diff checks.
+- Append a new row only after the corresponding domain directory exists.
+- Manifest lists memory domains only; do not reference application repositories.
+""")
+
+add_file_content("cascade/init_context.md", """\
+<!-- @meta {
+  "fileType": "immutable",
+  "purpose": "Immutable North-Star: Defines the foundational goals, architectural principles, and AI operational boundaries for this specific project.",
+  "editPolicy": "readonly",
+  "routeScope": "global"
+} -->
+# Project North-Star: Initial & Immutable Context
+
+This document provides the foundational, unchanging (immutable) context for the AI agent operating on this project. It outlines the core mission, critical architectural principles, and the AI's defined role and boundaries. This context must underpin all AI reasoning, planning, and actions.
+
+---
+## I. Core Project Identity & Mission
+
+*   **Project Name:** `[Specify Project Name - e.g., "NextGen E-commerce Platform", "AI-Powered Medical Diagnosis Assistant"]`
+*   **Primary Goal/Mission:** `[Define the single most important objective of this project. Be specific. E.g., "To build a highly scalable and personalized e-commerce experience that achieves market leadership through superior usability and AI-driven recommendations." or "To assist medical professionals by providing rapid, accurate, and evidence-based preliminary diagnostic suggestions from medical imagery and patient data."]`
+*   **Key Success Metrics (Conceptual):** `[List 2-3 high-level indicators of project success. E.g., "Significant year-over-year growth in user engagement and conversion rates," "Consistently high customer satisfaction (CSAT > 90%)," or "Demonstrable improvement in diagnostic speed and accuracy for targeted conditions," "Adoption by X number of clinics within Y years."]`
+
+---
+## II. Fundamental Architectural Principles & Constraints
+
+*   **Primary Technology Stack (Core Immutable Elements):**
+    *   Backend: `[e.g., Python with FastAPI, Java with Spring Boot, Node.js with Express]`
+    *   Frontend: `[e.g., React, Angular, Vue.js, SvelteKit]`
+    *   Database(s): `[e.g., PostgreSQL, MongoDB, MySQL, Cassandra]`
+    *   Primary Cloud Provider: `[e.g., AWS, Azure, GCP, None/On-premise]`
+    *   Other Critical Libraries/Frameworks: `[e.g., "Kafka for event streaming," "Kubernetes for orchestration (if applicable)"]`
+*   **Overarching Architectural Style (If Fixed & Critical):**
+    *   `[e.g., "Microservices architecture with event-driven communication patterns," "Modular Monolith," "Serverless-first for all new backend services," "Strict adherence to Clean Architecture principles."]`
+*   **Key Design Non-Negotiables (Immutable Rules):**
+    *   `[e.g., "All sensitive user data must be encrypted at rest and in transit using industry-standard algorithms."]`
+    *   `[e.g., "The system must be designed for horizontal scalability to accommodate X users/requests."]`
+    *   `[e.g., "All new APIs must adhere to the existing OpenAPI v3.x contract defined in /cascade/domains/schema/api_contracts.md."]`
+    *   `[e.g., "Accessibility: All user-facing components must meet WCAG 2.1 AA standards."]`
+*   **Critical Performance/Scalability Targets (Absolute Minimums):**
+    *   `[e.g., "Core API endpoints must maintain an average response time below 150ms under peak load conditions as defined in performance_targets.md."]`
+    *   `[e.g., "System must handle a sustained load of 10,000 concurrent users."]`
+
+---
+## III. AI Agent's Role & Boundaries within this Project
+
+*   **Primary Role of AI:** `[Be specific. E.g., "To assist in the development of new features for the client-side application, including component creation, state management logic, and unit/integration tests.", "To generate and maintain comprehensive API documentation based on OpenAPI specifications and code comments.", "To identify and propose refactoring opportunities in legacy modules to improve code quality and align with modern best practices."]`
+*   **Scope Limitations (Hard Boundaries - What AI Must NOT Do):**
+    *   "AI must **never** deploy any code to production environments. All deployments require human review and manual execution of deployment pipelines."
+    *   "AI must **never** alter this file (`cascade/init_context.md`), `/cascade/00_BOOTSTRAP.md`, or `/cascade/system_manifest.md`."
+    *   "AI must **not** make changes to core security modules (e.g., authentication, authorization) without an approved job plan explicitly detailing the changes and signed off by a human lead (simulated via a `requiresReview: true` flag and positive confirmation if applicable)."
+    *   "AI must **not** introduce new core dependencies (e.g., new programming languages, major frameworks) without these being documented as a key decision in the relevant domain's `key_decisions.md` file and approved."
+    *   `[Add any other project-specific critical boundaries]`
+*   **Preferred Development Practices (Guiding Principles for AI):**
+    *   `[e.g., "Strive for Test-Driven Development (TDD) where practical, ensuring new logic is accompanied by robust tests."]`
+    *   `[e.g., "Code comments should be clear, concise, and explain the 'why' behind complex logic, not just restate the 'what'."]`
+    *   `[e.g., "Follow the Don't Repeat Yourself (DRY) principle diligently."]`
+    *   `[e.g., "Ensure all contributions are consistent with coding conventions defined in relevant /cascade/domains/<domain>/conventions.md files."]`
+
+---
+## IV. Core Values / Guiding Philosophy (Project-Specific)
+
+*   `[e.g., "User-centricity: Prioritize features and designs that deliver maximum value and ease-of-use to the end-user."]`
+*   `[e.g., "Robustness & Reliability: Build for stability and ensure comprehensive error handling."]`
+*   `[e.g., "Maintainability: Write clean, well-documented, and easily understandable code."]`
+*   `[e.g., "Security by Design: Integrate security considerations into every stage of development."]`
+*   `[e.g., "Iterative Progress: Favor incremental improvements and continuous learning."]`
+
+---
+This document is immutable and serves as the ultimate reference for the AI's core operational context within this project.
+""")
+
+add_file_content("cascade/protocols.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Registry of formal protocol definition files.",
+  "editPolicy": "appendOnly",
+  "routeScope": "global"
+} -->
+# Protocols Registry
+
+| Protocol File | Role |
+|---------------|------|
+| `/cascade/protocols/loop_protocol.md` | Core READ → ACT → WRITE loop |
+| `/cascade/protocols/file_lifespans.md` | Lifecycle refresh thresholds |
+| `/cascade/protocols/safeguards.md` | Hashing, write-gate, recovery logic |
+| `/cascade/protocols/recovery.md` | Crash / resume instructions |
+
+---
+## Guidelines
+- List protocol definition files only; exclude plans, logs, or counters.
+- Keep rows alphabetised for diff‑friendly updates.
+- Append a new row immediately after a protocol file is added to `/cascade/protocols/`.
+""")
+
+add_file_content("cascade/lifecycle.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Indexes all domain lifecycle counters and drives hygiene triggers (reread / prune / merge).",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global"
+} -->
+> Central registry for `lifecycle/*.md` counter files.
+> Counters are incremented during **WRITE**, inspected during **ACT**, and compared to thresholds in `/protocols/file_lifespans.md`.
+---
+#### Registered Counters
+| Counter File | Domain | What It Tracks                       |
+|--------------|--------|--------------------------------------|
+| `counter.md` | global | All WRITE cycles                     |
+| `client.md`  | client | UI / frontend edits                  |
+| `server.md`  | server | Backend / API edits                  |
+| `schema.md`  | schema | Contract & validation changes        |
+| `security.md`| security| High-risk actions & audit events    |
+| `drift_flag.md` | system | Unresolved lifecycle contradictions |
+---
+#### Trigger Logic
+- **WRITE phase** → increment relevant counter once per loop.
+- **ACT phase** → compare ticks to `reread / prune / merge` thresholds.
+- **Queued actions** → `force_reread`, `schedule_prune`, `schedule_merge`.
+- **Drift** → if actions are skipped, update `/lifecycle/drift_flag.md` and log in `/audit/meta_audit.md`.
+---
+#### Maintenance
+- Do **not** edit tick values by hand.
+- Add new counters only via reviewed job plan; update this table & `file_lifespans.md`.
+- Keep rows alphabetised.
+---
+#### Example Counter File Metadata
+<!-- @meta {
+  "fileType": "counter",
+  "purpose": "Tracks WRITE-phase activity for the client domain.",
+  "editPolicy": "incrementOnly",
+  "routeScope": "client"
+} -->
+""")
+
+add_file_content("cascade/change_log.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Manifest for change log files; defines the lifecycle of change information from recent activity to a permanent archive using a 'loop and sweep' mechanism.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global",
+  "mergeTarget": "change_log/summary.md",
+  "maxEntries": 7
+} -->
+### /cascade/change_log.md
+> **Role:** Defines the structured process for logging summaries of changes made during each WRITE phase. This system ensures both recent visibility and long-term archival. It involves two key files:
+> * **`change_log/recent.md`**: A buffer that collects summaries of recent changes. Once it reaches `maxEntries` (e.g., 7 changes), its contents are swept to `change_log/summary.md`.
+> * **`change_log/summary.md`**: A permanent, append-only archive of all change summaries, providing a complete historical record.
+---
+#### Change Log Files & Lifecycle
+| File Path                | Role & Behavior                                                                                                              | Max Entries (if applicable) | Edit Policy      |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------------|-----------------------------|------------------|
+| `change_log/recent.md`   | Buffer for summaries of recent changes. Appended to after each relevant WRITE operation. When full, all entries are swept to `summary.md` and this file is cleared. | 7 (as per metadata)         | `appendOnly`     |
+| `change_log/summary.md`  | Permanent append-only archive. Receives batches of change summaries from `recent.md`.                                          | N/A                         | `appendOnly`     |
+
+---
+#### Buffer Management for `change_log/recent.md`
+- **Population**: After a WRITE phase successfully completes and makes modifications, a summary of those changes (e.g., files affected, nature of change, job ID if applicable, timestamp) is appended as a new entry to `change_log/recent.md`.
+- **`maxEntries`**: The metadata field `maxEntries` (e.g., 7) in this file (`change_log.md`) and/or in `change_log/recent.md` defines the capacity of the recent changes buffer.
+- **Sweep Operation (Trigger for Archival)**:
+    1. This operation is triggered when the number of change summaries in `change_log/recent.md` reaches `maxEntries`.
+    2. All accumulated change summaries are read from `change_log/recent.md`.
+    3. These summaries are then appended in chronological order to `change_log/summary.md`.
+    4. `change_log/recent.md` is then cleared of these entries (e.g., overwritten with its initial header or an empty state) to begin collecting the next batch of change summaries.
+- **Edit Policy**: `change_log/recent.md` is `appendOnly` for individual change summaries. The sweep and clear operation is a system-level action.
+
+---
+#### `change_log/summary.md`
+- **Integrity**: This file is strictly append-only to maintain a tamper-evident historical record of all system modifications.
+- **Content**: Contains all change summaries that have been swept from `change_log/recent.md`. Timestamps or sequential IDs should ensure chronological order.
+
+---
+#### Guiding Principles for AI
+- The AI must follow the operational protocol defined in `/cascade/protocols/loop_protocol.md` for updating these change log files during the WRITE phase.
+- The sweep from `change_log/recent.md` to `change_log/summary.md` is a critical step for maintaining context efficiency (by keeping `recent.md` lean) and ensuring historical integrity.
+---
+""")
+
+add_file_content("cascade/job_logs.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Manifest for job-log files; defines the lifecycle of job information from current planning, to recent history, to a permanent archive.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global",
+  "mergeTarget": "job_logs/summary.md",
+  "maxEntries": 5
+} -->
+### /cascade/job_logs.md
+> **Role:** Defines the structured process for logging AI job plans and their outcomes. This involves three key files:
+> * **`temp_job.md`**: Contains the plan for the single, currently active or most recently defined job. It is overwritten with each new job.
+> * **`job_logs/recent.md`**: A buffer that collects summaries of recently completed jobs. Once it reaches `maxEntries` (e.g., 5 jobs), its contents are swept to `job_logs/summary.md`.
+> * **`job_logs/summary.md`**: A permanent, append-only archive of all job summaries, providing a complete historical record.
+---
+#### Job Log Files & Lifecycle
+| File Path               | Role & Behavior                                                                                                | Max Entries (if applicable) | Edit Policy      |
+|-------------------------|----------------------------------------------------------------------------------------------------------------|-----------------------------|------------------|
+| `temp_job.md`           | Current job plan; overwritten each cycle by the AI during the ACT phase.                                       | 1 (conceptual)              | `overwrite`      |
+| `job_logs/recent.md`    | Buffer for summaries of recently completed jobs. Appended to after each job. When full, all entries are swept to `summary.md` and this file is cleared. | 5 (as per metadata)         | `appendOnly`     |
+| `job_logs/summary.md`   | Permanent append-only archive. Receives batches of job summaries from `recent.md`.                               | N/A                         | `appendOnly`     |
+
+---
+#### Buffer Management for `job_logs/recent.md`
+- **Population**: After a job defined in `temp_job.md` is successfully completed, a summary of that job (intent, key outcomes, status) is appended as a new entry to `job_logs/recent.md`.
+- **`maxEntries`**: The metadata field `maxEntries` (e.g., 5) in this file (`job_logs.md`) and/or in `job_logs/recent.md` defines the capacity of the recent jobs buffer.
+- **Sweep Operation (Trigger for Archival)**:
+    1. This operation is triggered when the number of job summaries in `job_logs/recent.md` reaches `maxEntries`.
+    2. All accumulated job summaries are read from `job_logs/recent.md`.
+    3. These summaries are then appended in chronological order to `job_logs/summary.md`.
+    4. `job_logs/recent.md` is then cleared of these entries (e.g., overwritten with its initial header or an empty state) to begin collecting the next batch of job summaries.
+- **Edit Policy**: `job_logs/recent.md` is `appendOnly` for individual job summaries. The sweep and clear operation is a system-level action.
+
+---
+#### `job_logs/summary.md`
+- **Integrity**: This file is strictly append-only to maintain a tamper-evident historical record.
+- **Content**: Contains all job summaries that have been swept from `job_logs/recent.md`. Timestamps or sequential job IDs should ensure chronological order.
+
+---
+#### Guiding Principles for AI
+- The AI must follow the operational protocol defined in `/cascade/protocols/loop_protocol.md` for updating these job log files.
+- `temp_job.md` is the source for the current job's execution and its subsequent summarization into `job_logs/recent.md`.
+- The sweep from `job_logs/recent.md` to `job_logs/summary.md` is a critical step for maintaining context efficiency and historical integrity.
+---
+""")
+
+
+# /cascade/protocols/ files
+add_file_content("cascade/protocols/loop_protocol.md", """\
+<!-- @meta {
+  "fileType": "protected",
+  "purpose": "Defines the structured execution loop used by ContextCascade: READ → ACT → WRITE, including job and change log management.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global"
+} -->
+#### Loop Protocol
+<!-- PROTECTED -->
+#### Three-Phase Execution Loop
+This protocol enforces strict sequencing of AI task execution into three non-overlapping phases.
+
+##### Phase 1 — READ
+- Load context files as defined in the **active load plan** generated during the previous ACT phase. This plan is typically found in `/cascade/load_plans/`.
+- Perform no mutation or job logic during this phase.
+- Validate hashes for all `immutable` or `protected` files against `/cascade/audit/integrity_snapshot.md`.
+- After you read this file in full, read `/cascade/protocols/file_lifespans.md` next to understand context refresh policies.
+
+##### Phase 2 — ACT (Plan & Prepare)
+- Based on the loaded context and the user's prompt, perform reasoning.
+- Generate a detailed **job plan** in `/cascade/job_logs/temp_job.md`. This plan outlines the intended changes, target files, and expected outcomes for the WRITE phase. This file is overwritten each cycle.
+- If necessary, generate an updated load plan for the *next* READ phase.
+- Create no file writes or direct modifications to system files during this phase.
+
+##### Phase 3 — WRITE (Execute & Log)
+- **A. Pre-WRITE Validation:**
+    - Verify immutable/protected files still match `/cascade/audit/integrity_snapshot.md` (Pre-WRITE hash check). Abort if mismatch.
+    - Validate the job plan in `/cascade/job_logs/temp_job.md` for structural integrity and adherence to write gates defined in `/cascade/security/write_gates.md`. Abort if invalid.
+- **B. Execute Job Plan:**
+    - Execute the actions defined in `/cascade/job_logs/temp_job.md`.
+    - Mutate only allowed files as specified in the job plan.
+- **C. Post-WRITE Validation:**
+    - Recompute hashes of affected files and confirm against `expectedHashAfter` values from the job plan.
+    - If validation fails, attempt rollback as per job plan or enter Safe-Hold.
+- **D. System Updates & Initial Logging:**
+    1.  **Log Change Summary:** Generate a concise summary of the changes made during this WRITE phase (e.g., files modified, nature of change, related job ID). Append this summary to `/cascade/change_log/recent.md`.
+    2.  **Increment Counters:** Increment relevant lifecycle counters in `/cascade/lifecycle/`.
+    3.  **Update Checkpoint:** Update `/cascade/checkpoints/loop_checkpoint.md`.
+- **E. Change Log Processing (Loop and Sweep Mechanism):**
+    1.  **Check Recent Changes Buffer:**
+        *   Count the number of distinct change summaries in `/cascade/change_log/recent.md`.
+        *   Compare this count to the `maxEntries` value defined in `/cascade/change_log/recent.md`'s metadata (typically also referenced in `/cascade/change_log.md`).
+    2.  **Perform Sweep if Buffer is Full:**
+        *   If the count of change summaries in `/cascade/change_log/recent.md` equals `maxEntries`:
+            *   Read all change summaries currently stored in `/cascade/change_log/recent.md`.
+            *   Append these summaries (as a batch, maintaining chronological order) to `/cascade/change_log/summary.md`.
+            *   Clear `/cascade/change_log/recent.md` of the swept entries (e.g., overwrite it with its initial header comment or an empty state, ready for new entries).
+- **F. Job Log Processing (Loop and Sweep Mechanism):**
+    1.  **Summarize Current Job:** Generate a concise summary of the just-completed job from `/cascade/job_logs/temp_job.md` (including intent, key files/outcomes, status, timestamp).
+    2.  **Append to Recent Jobs:** Append this summary as a new entry to `/cascade/job_logs/recent.md`.
+    3.  **Check Recent Jobs Buffer:**
+        *   Count the number of distinct job summaries in `/cascade/job_logs/recent.md`.
+        *   Compare this count to the `maxEntries` value defined in `/cascade/job_logs/recent.md`'s metadata (typically also referenced in `/cascade/job_logs.md`).
+    4.  **Perform Sweep if Buffer is Full:**
+        *   If the count of job summaries in `/cascade/job_logs/recent.md` equals `maxEntries`:
+            *   Read all job summaries currently stored in `/cascade/job_logs/recent.md`.
+            *   Append these summaries (as a batch, maintaining chronological order) to `/cascade/job_logs/summary.md`.
+            *   Clear `/cascade/job_logs/recent.md` of the swept entries (e.g., overwrite it with its initial header comment or an empty state, ready for new entries).
+- **G. Conclude WRITE Phase:**
+    - If any step from A to F results in a critical failure that cannot be resolved, abort the loop and enter Safe-Hold mode as defined in `/cascade/protocols/recovery.md`.
+<!-- END PROTECTED -->
+---
+#### Loop Entry / Exit
+- **Entry**: Allowed only when no `drift_flag.md` exists and `/cascade/_locks/active_edit.lock` is not present or is stale and cleared by recovery.
+- **Exit**: Occurs after a successful WRITE phase (including all sub-steps A-G) and successful delta audit.
+#### Safe-Hold Triggers
+- Hash or safeguard failure during any phase.
+- Stale or conflicting `_locks/active_edit.lock`.
+- Missing, malformed, or invalid `/cascade/job_logs/temp_job.md` at the start of WRITE phase.
+- Failure in job execution or post-WRITE validation that cannot be rolled back.
+- Critical failure during Job Log or Change Log Processing.
+#### Audit Expectations
+- Each phase transition must be traceable by job ID derived from `/cascade/job_logs/temp_job.md`.
+- Lifecycle counters must increment exactly once per successful WRITE cycle.
+- Job log files (`recent.md`, `summary.md`) must reflect the outcomes of all executed jobs.
+- Change log files (`recent.md`, `summary.md`) must reflect all system modifications.
+#### Maintenance Guidance
+- Never modify PROTECTED sections except via security-reviewed job plans that explicitly detail changes to the core loop protocol.
+- Ensure `/cascade/job_logs.md` and the metadata of `/cascade/job_logs/recent.md` correctly define `maxEntries` for their sweep mechanism.
+- Ensure `/cascade/change_log.md` and the metadata of `/cascade/change_log/recent.md` correctly define `maxEntries` for their sweep mechanism.
+""")
+
+add_file_content("cascade/protocols/file_lifespans.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Defines counter thresholds that trigger rereads, pruning, or summary merges for each lifecycle scope.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global"
+} -->
+#### File Lifespan Thresholds
+Thresholds below are evaluated during **Phase 2 – ACT**. When a lifecycle counter meets or exceeds a threshold, the corresponding action is queued for the next loop.
+| Domain Scope | `reread_threshold` | `prune_threshold` | `merge_threshold` |
+|--------------|--------------------|-------------------|-------------------|
+| global (`counter.md`) | 5 | 7 | 10 |
+| client (`client.md`)  | 3 | 5 | 8 |
+| server (`server.md`)  | 3 | 5 | 8 |
+| schema (`schema.md`)  | 4 | 6 | 9 |
+| security (`security.md`) | 2 | 4 | 6 |
+---
+##### Threshold Meaning
+- **`reread_threshold`** → Force a context reload for the domain on next READ.
+- **`prune_threshold`** → Schedule deletion or archival of expired temp / rolling files.
+- **`merge_threshold`** → Consolidate rolling buffers into durable summaries (e.g. `summary.md`).
+---
+##### Rationale (Lean)
+- *Global* counters change most often → slightly larger window.
+- *Client / Server* domains typically change more rapidly → tighter windows.
+- *Schema* updates are less frequent but critical → moderate thresholds.
+- *Security* events require aggressive maintenance to keep audit noise low.
+---
+##### Maintenance Guidance
+- Update thresholds only via a reviewed job plan.
+- Add a new row when introducing a new domain counter.
+- Keep table alphabetised for diff‑friendly PRs.
+""")
+
+add_file_content("cascade/protocols/safeguards.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Comprehensive enforcement rules for hash integrity, protected blocks, write-gates, and recovery triggers.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global"
+} -->
+#### Protocol Safeguards Policy
+This policy centralises **all mandatory protections** that preserve the integrity, auditability, and governance of the ContextCascade memory layer.
+---
+##### 1. Enforcement Matrix
+| # | Safeguard | Trigger Condition | Automatic Response |
+|---|-----------|------------------|--------------------|
+| 1 | **Immutable Hash Check** | Hash mismatch detected in any `fileType: immutable` file during pre‑ or post‑WRITE | • Abort WRITE<br>• Log `hashMismatch` in `/audit/meta_audit.md`<br>• Raise `/lifecycle/drift_flag.md` |
+| 2 | **Protected Block Enforcement** | Attempted edit overlaps a `<!-- PROTECTED -->` span | • Abort WRITE<br>• Log `protectedOverlap`<br>• Require security review if `escalation: true` |
+| 3 | **Write Gate Validation** | Target path not allowed by `/security/write_gates.md` | • Abort WRITE<br>• Log `gateViolation` |
+| 4 | **Active Edit Lock** | `_locks/active_edit.lock` present at READ or WRITE start | • Halt loop in safe‑hold<br>• Prompt manual unlock if stale |
+| 5 | **Pre/Post Hash Workflow** | Hash delta of protected/immutable files differs from plan | • Roll back WRITE<br>• Log `postHashMismatch`<br>• Flag drift |
+| 6 | **High‑Risk Action Flag** | Job plan contains `requiresReview: true` or touches critical files (e.g. `system_manifest.md`) | • Suspend WRITE until review approved<br>• Record event in `security_review.md` |
+---
+##### 2. Metadata Quick‑Reference
+| Marker | Effect |
+|--------|--------|
+| `fileType: immutable` | Seals file content; requires hash verification every loop |
+| `editPolicy: readonly` | Disables all writes (immutable by intent) |
+| `protected: true` | Marks inline block as untouchable, even if file is editable |
+| `ttlCycles: N` | Governs expiry of temporary / evictable files |
+| `requiresReview: true` | Forces human / elevated agent approval before WRITE |
+---
+##### 3. Hash Verification Workflow
+1. **Pre‑WRITE**
+   - Compute SHA‑256 for every file tagged `immutable` **or** containing a protected block.
+   - Compare against `audit/integrity_snapshot.md`.
+   - On any mismatch → **abort** and raise `hashMismatch`.
+2. **Post‑WRITE**
+   - Re‑hash the same set plus any files actually written.
+   - Validate against `expectedHashAfter` in `/cascade/job_logs/temp_job.md`.
+   - On success → append entry to `/cascade/change_log/recent.md`.
+   - On failure → roll back write, set `drift_flag.md`.
+---
+##### 4. Protected Block Syntax
+```md
+<!-- PROTECTED -->
+... uneditable content ...
+<!-- END PROTECTED -->
+```
+- **Nested blocks** are not allowed.
+- Attempting to insert, delete, or reorder text inside a protected span constitutes a `protectedOverlap` violation.
+---
+##### 5. Recovery & Escalation Paths
+- **Safe‑Hold Mode**: Activated on any safeguard breach to prevent cascading corruption.
+- **Loop Recovery**: Instructions in `/cascade/protocols/recovery.md` outline how to resume after drift resolution.
+- **Security Review**: High‑risk or failed safeguards require a signed entry in `/cascade/security/security_review.md`.
+- **Immutable Restore**: Use snapshots listed in `audit/integrity_snapshot.md` to roll back mutated files.
+---
+##### 6. Maintenance Guidance
+- Update this file **only** through an approved security review.
+- Keep safeguard IDs in the enforcement matrix **stable** for audit tooling.
+- Align new safeguards with counters and thresholds defined in `file_lifespans.md`.
+""")
+
+add_file_content("cascade/protocols/recovery.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Structured fallback procedure triggered by safeguard failure, drift, or WRITE abortion.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global"
+} -->
+#### Recovery Protocol
+This file governs how the system recovers when the loop fails due to safeguard violations, hash mismatches, or unresolved drift.
+---
+##### 1. Automatic Triggers
+- Presence of `/lifecycle/drift_flag.md`
+- WRITE aborted during `loop_protocol.md`
+- Stale `_locks/active_edit.lock` preventing job completion
+- Corrupted or missing `temp_job.md`
+---
+##### 2. Recovery Phases
+###### Phase A — Diagnose
+1. Halt all WRITE operations
+2. Review `/audit/meta_audit.md` for safeguard or hash breach
+3. Validate `audit/integrity_snapshot.md` against current file states
+4. Verify `temp_job.md` plan integrity
+###### Phase B — Contain & Flag
+1. Move unstable or suspect files to `/quarantine/YYYY-MM-DD/`
+2. If not already present, create `/lifecycle/drift_flag.md` with cause summary
+3. Document all actions in `/audit/meta_audit.md`
+###### Phase C — Restore
+1. Use `integrity_snapshot.md` to replace corrupted `immutable` or `protected` files
+2. Generate a minimal load plan referencing only core files (BOOTSTRAP, INDEX, MANIFEST)
+3. Clear `drift_flag.md` only after successful plan load and hash check
+---
+##### 3. Manual Interventions
+- Restoration steps require elevated agent or human confirmation
+- Log each override in `/security/security_review.md` tagged `recovery`
+---
+##### 4. Emergency Halt
+If integrity cannot be restored:
+1. Archive `/cascade/` ➜ `/cascade_stale_YYYYMMDD/`
+2. Rebootstrap using seed files
+3. Transfer only audited summaries or logs
+4. Log postmortem to `/audit/meta_audit.md` with `postmortem` tag
+---
+##### 5. Post-Recovery Actions
+| File | Expected Update |
+|------|------------------|
+| `/audit/meta_audit.md` | Recovery event logged |
+| `/change_log/recent.md` | Deltas appended |
+| `/checkpoints/loop_checkpoint.md` | New checkpoint tagged `recovery-N` |
+| `/lifecycle/drift_flag.md` | Deleted or archived |
+| `/quarantine/` | Retain for 30 days minimum |
+---
+##### 6. Prevention Notes
+- Validate `temp_job.md` for each cycle
+- Monitor lifecycle counters for drift or stalling
+- Run a dry loop audit (`read-only mode`) periodically
+""")
+
+# /cascade/lifecycle/ files
+add_file_content("cascade/lifecycle/counter.md", """\
+<!-- @meta {
+  "fileType": "counter",
+  "purpose": "Tracks global WRITE-phase activity across all domains.",
+  "editPolicy": "incrementOnly",
+  "routeScope": "global"
+} -->
+# Global Lifecycle Counter
+
+This file tracks the total number of WRITE cycles that have occurred across the entire ContextCascade system.
+
+**Current Count:**
+
+0
+
+---
+## Usage
+- This counter should be incremented by 1 after every successful WRITE phase, regardless of the domain(s) affected.
+- It is used by `/protocols/file_lifespans.md` to trigger global `reread`, `prune`, or `merge` actions.
+- Do not edit this file manually. It is managed by the ContextCascade system.
+
+---
+## Integrity
+- Expected value: A non-negative integer.
+- Monotonically increasing.
+""")
+
+add_file_content("cascade/lifecycle/client.md", """\
+<!-- @meta {
+  "fileType": "counter",
+  "purpose": "Tracks WRITE-phase activity specifically for the 'client' domain.",
+  "editPolicy": "incrementOnly",
+  "routeScope": "client"
+} -->
+# Client Domain Lifecycle Counter
+
+This file tracks the total number of WRITE cycles that have specifically impacted the 'client' domain.
+
+**Current Count:**
+
+0
+
+---
+## Usage
+- This counter should be incremented by 1 after every successful WRITE phase that modifies one or more files within the `client` routeScope.
+- It is used by `/protocols/file_lifespans.md` to trigger `reread`, `prune`, or `merge` actions specific to the client domain.
+- Do not edit this file manually. It is managed by the ContextCascade system.
+
+---
+## Integrity
+- Expected value: A non-negative integer.
+- Monotonically increasing.
+""")
+
+add_file_content("cascade/lifecycle/server.md", """\
+<!-- @meta {
+  "fileType": "counter",
+  "purpose": "Tracks WRITE-phase activity specifically for the 'server' domain.",
+  "editPolicy": "incrementOnly",
+  "routeScope": "server"
+} -->
+# Server Domain Lifecycle Counter
+
+This file tracks the total number of WRITE cycles that have specifically impacted the 'server' domain.
+
+**Current Count:**
+
+0
+
+---
+## Usage
+- This counter should be incremented by 1 after every successful WRITE phase that modifies one or more files within the `server` routeScope.
+- It is used by `/protocols/file_lifespans.md` to trigger `reread`, `prune`, or `merge` actions specific to the server domain.
+- Do not edit this file manually. It is managed by the ContextCascade system.
+
+---
+## Integrity
+- Expected value: A non-negative integer.
+- Monotonically increasing.
+""")
+
+add_file_content("cascade/lifecycle/schema.md", """\
+<!-- @meta {
+  "fileType": "counter",
+  "purpose": "Tracks WRITE-phase activity specifically for the 'schema' domain.",
+  "editPolicy": "incrementOnly",
+  "routeScope": "schema"
+} -->
+# Schema Domain Lifecycle Counter
+
+This file tracks the total number of WRITE cycles that have specifically impacted the 'schema' domain.
+
+**Current Count:**
+
+0
+
+---
+## Usage
+- This counter should be incremented by 1 after every successful WRITE phase that modifies one or more files within the `schema` routeScope.
+- It is used by `/protocols/file_lifespans.md` to trigger `reread`, `prune`, or `merge` actions specific to the schema domain.
+- Do not edit this file manually. It is managed by the ContextCascade system.
+
+---
+## Integrity
+- Expected value: A non-negative integer.
+- Monotonically increasing.
+""")
+
+add_file_content("cascade/lifecycle/security.md", """\
+<!-- @meta {
+  "fileType": "counter",
+  "purpose": "Tracks WRITE-phase activity specifically for high-risk actions and security events.",
+  "editPolicy": "incrementOnly",
+  "routeScope": "security"
+} -->
+# Security Lifecycle Counter
+
+This file tracks the total number of WRITE cycles related to high-risk actions or security events, such as modifications to protected files or security policy changes.
+
+**Current Count:**
+
+0
+
+---
+## Usage
+- This counter should be incremented by 1 after every successful WRITE phase involving operations flagged with `requiresReview: true`, modifications to files in `/cascade/security/`, or changes to `immutable` files after override.
+- It is used by `/protocols/file_lifespans.md` to trigger `reread`, `prune`, or `merge` actions specific to security-related contexts, potentially more aggressively.
+- Do not edit this file manually. It is managed by the ContextCascade system.
+
+---
+## Integrity
+- Expected value: A non-negative integer.
+- Monotonically increasing.
+""")
+
+add_file_content("cascade/lifecycle/drift_flag.md", """\
+<!-- @meta {
+  "fileType": "temporary",
+  "purpose": "Signals an unresolved contradiction or deviation in the cascade lifecycle. Presence of this file may halt operations.",
+  "editPolicy": "overwrite",
+  "routeScope": "global",
+  "ttlCycles": 1
+} -->
+# Drift Flag
+
+**This file indicates a potential inconsistency or drift in the ContextCascade system.**
+
+Its presence signifies that an unexpected state or behavior was detected, such as:
+- A hash mismatch for an `immutable` or `protected` file.
+- A lifecycle counter not incrementing as expected.
+- A validator detecting a schema diff from a known snapshot.
+- An unexpected file modification or deletion.
+
+---
+## Action Required
+- **System Behavior:** The ContextCascade system may halt or enter a safe-hold mode when this file is present. Normal operations might be suspended until the drift is investigated and resolved.
+- **Investigation:** Review `/audit/meta_audit.md` for detailed logs related to the detected drift.
+- **Resolution:**
+    1. Identify the cause of the drift.
+    2. Take corrective actions as per `/cascade/protocols/recovery.md`. This might involve restoring files, correcting metadata, or acknowledging a deliberate change.
+    3. Once the system state is verified and consistent, this flag file should be deleted or cleared as part of the recovery process.
+
+---
+## Content
+This file may contain a brief, human-readable summary of the detected drift if generated by the system.
+
+**Detected Drift (if any):**
+
+No drift detected. System nominal.
+""")
+
+# /cascade/change_log/ files
+add_file_content("cascade/change_log/recent.md", """\
+<!-- @meta {
+  "fileType": "rolling",
+  "subtype": "buffer",
+  "purpose": "A rolling log of the most recent WRITE cycle summaries, up to a defined maximum.",
+  "editPolicy": "appendOnly",
+  "routeScope": "global",
+  "maxEntries": 7,
+  "mergeTarget": "/cascade/change_log/summary.md"
+} -->
+# Recent Change Log
+
+This file contains a rolling buffer of the most recent successfully completed WRITE cycle summaries. When this log exceeds `maxEntries` (7), the oldest entry is moved to `/cascade/change_log/summary.md`.
+
+---
+*(No entries yet)*
+""")
+
+add_file_content("cascade/change_log/summary.md", """\
+<!-- @meta {
+  "fileType": "append-only",
+  "purpose": "A permanent, append-only historical log of all WRITE cycle summaries, including those rolled over from recent.md.",
+  "editPolicy": "appendOnly",
+  "routeScope": "global"
+} -->
+# Change Log Summary
+
+This file is an append-only historical ledger of all successfully completed WRITE cycles. It includes entries merged from `/cascade/change_log/recent.md` when that buffer reaches its `maxEntries` limit.
+
+---
+## Guidelines
+- Entries are added chronologically.
+- Existing entries must not be modified or deleted.
+- Each entry should provide a concise summary of a WRITE cycle, including:
+    - Loop ID or timestamp.
+    - Job plan reference.
+    - Summary of modified files.
+    - Outcome status (e.g., success, rolledBack, partial).
+    - Post-WRITE hash confirmation status.
+
+---
+*(No entries yet)*
+""")
+
+# /cascade/job_logs/ files
+add_file_content("cascade/job_logs/temp_job.md", """\
+<!-- @meta {
+  "fileType": "temporary",
+  "subtype": "job_plan",
+  "purpose": "Ephemeral job plan for the current or upcoming WRITE cycle. Contains details of intended changes.",
+  "editPolicy": "overwrite",
+  "routeScope": "global",
+  "ttlCycles": 1
+} -->
+# Temporary Job Plan
+
+This file outlines the intended actions for the current or immediately upcoming WRITE cycle. It is generated during the ACT phase and consumed by the WRITE phase. It has a lifespan of one cycle (`ttlCycles: 1`).
+
+---
+## Structure
+A job plan typically includes:
+- **`intent`**: A brief description of the goal (e.g., "Patch UI routing schema").
+- **`targets`**: A list of files to be modified, including:
+    - `path`: The file path.
+    - `expectedHashBefore`: SHA-256 hash of the file before the edit.
+    - `expectedHashAfter`: Predicted SHA-256 hash after the edit.
+    - `editPolicy` to be applied (e.g., `appendOnly`, `overwrite`).
+    - `subtype` if applicable (e.g., `buffer`).
+- **`rollbackPlan`**: Instructions or reference for rollback if the job fails.
+- **`requiresReview`**: (Optional) `true` if the plan needs manual or elevated approval.
+- **`securityLevel`**: (Optional) `high` for sensitive operations.
+
+---
+## Example
+```yaml
+intent: "Update client domain index with new component."
+targets:
+  - path: "cascade/domains/client/index.md"
+    expectedHashBefore: "abc123def456..."
+    expectedHashAfter: "789ghi012jkl..."
+    editPolicy: "appendOnly"
+    action: "Append new route for /component/new."
+  - path: "cascade/change_log/recent.md"
+    expectedHashBefore: "123..." # Optional for rolling logs if only appending
+    expectedHashAfter: "456..." # Optional
+    editPolicy: "appendOnly"
+    action: "Log client index update."
+rollbackPlan: "Revert cascade/domains/client/index.md to hash abc123def456... and remove corresponding entry from recent.md."
+requiresReview: false
+```
+
+---
+*(This file is typically overwritten each cycle. No active job plan at this moment.)*
+""")
+
+add_file_content("cascade/job_logs/recent.md", """\
+<!-- @meta {
+  "fileType": "rolling",
+  "subtype": "buffer",
+  "purpose": "A rolling log of the most recent job plan summaries, up to a defined maximum.",
+  "editPolicy": "appendOnly",
+  "routeScope": "global",
+  "maxEntries": 5,
+  "mergeTarget": "/cascade/job_logs/summary.md"
+} -->
+# Recent Job Logs
+
+This file contains a rolling buffer of summaries from recently executed job plans (from `temp_job.md`). When this log exceeds `maxEntries` (5), the oldest entry is moved to `/cascade/job_logs/summary.md`.
+
+Each entry should summarize a completed job, including:
+- Job ID (could be a timestamp or a unique hash of the plan).
+- Intent of the job.
+- Key files affected.
+- Status (e.g., success, failed, rolled_back).
+
+---
+*(No job summaries yet)*
+""")
+
+add_file_content("cascade/job_logs/summary.md", """\
+<!-- @meta {
+  "fileType": "append-only",
+  "purpose": "A permanent, append-only historical log of all job plan summaries, including those rolled over from job_logs/recent.md.",
+  "editPolicy": "appendOnly",
+  "routeScope": "global"
+} -->
+# Job Logs Summary
+
+This file is an append-only historical ledger of all executed job plan summaries. It includes entries merged from `/cascade/job_logs/recent.md` when that buffer reaches its `maxEntries` limit.
+
+---
+## Guidelines
+- Entries are added chronologically.
+- Existing entries must not be modified or deleted.
+- Each entry should provide a concise summary of an executed job plan, typically including:
+    - Job ID or reference to the original `temp_job.md` (e.g., its hash or timestamp).
+    - The stated `intent` of the job.
+    - A list of key files targeted by the job.
+    - The final `status` of the job (e.g., success, failure, rolled_back).
+    - Timestamp of execution.
+
+---
+*(No job summaries yet)*
+""")
+
+
+# /cascade/load_plans/ files
+add_file_content("cascade/load_plans/.gitkeep", "")
+add_file_content("cascade/load_plans/auto_plan_generic.md", """\
+<!-- @meta {
+  "fileType": "evictable",
+  "ttlCycles": 2,
+  "routeScope": "global",
+  "purpose": "Generic auto-generated load plan. Defines files to be read in the next cycle.",
+  "editPolicy": "overwrite"
+} -->
+# Auto-Generated Load Plan (Generic)
+
+This file specifies the set of files to be loaded into context for the next READ phase. It is typically generated by the AI during the ACT phase of the previous cycle.
+
+This is a generic placeholder. Specific load plans might be scoped by domain (e.g., `auto_plan_client.md`) or task.
+
+---
+## Files to Load:
+
+- `/cascade/00_BOOTSTRAP.md`
+- `/cascade/index.md`
+- `/cascade/system_manifest.md`
+- `/cascade/protocols/loop_protocol.md`
+- `/cascade/protocols/file_lifespans.md`
+- `/cascade/lifecycle/counter.md`
+- `/cascade/change_log/recent.md`
+- `/cascade/job_logs/recent.md`
+
+*(This list should be dynamically generated based on the current task, routeScope, token budget, and lifecycle triggers.)*
+
+---
+## Instructions for AI:
+- During the ACT phase, evaluate the needs for the next cycle.
+- Generate a new file (or overwrite an existing one like this) in `/cascade/load_plans/` that lists the precise files required.
+- Consider `routeScope`, `readPriority` from file metadata, `ttlCycles` of existing plans, and overall token budget.
+- This plan will be consumed at the start of the next READ phase.
+- If `ttlCycles` expires, this plan may be automatically pruned.
+""")
+
+# /cascade/_taskbuffers/ files
+add_file_content("cascade/_taskbuffers/.gitkeep", "")
+add_file_content("cascade/_taskbuffers/scratchpad.md", """\
+<!-- @meta {
+  "fileType": "temporary",
+  "subtype": "temp",
+  "purpose": "A temporary scratchpad for single-prompt use. Content does not persist beyond the current cycle.",
+  "editPolicy": "overwrite",
+  "ttlCycles": 1
+} -->
+# Scratchpad
+
+This is a temporary buffer for notes, draft content, or intermediate thoughts relevant only to the current prompt or execution cycle.
+
+---
+## Usage
+- Feel free to write any transient data here during the ACT phase.
+- The content of this file is not guaranteed to persist beyond the current READ-ACT-WRITE cycle.
+- It will be automatically deleted or cleared after 1 cycle (`ttlCycles: 1`).
+- Do not store critical or long-term information here. Use appropriate logs, domain files, or summaries for that.
+
+---
+*(Content here is ephemeral and will be overwritten or deleted frequently)*
+""")
+
+# /cascade/temp_notes/ files
+add_file_content("cascade/temp_notes/.gitkeep", "")
+add_file_content("cascade/temp_notes/planning_notes_global.md", """\
+<!-- @meta {
+  "fileType": "rolling",
+  "subtype": "buffer",
+  "purpose": "Rolling buffer for ongoing planning notes, ideas, or multi-step task tracking.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "global",
+  "maxEntries": 10,
+  "mergePolicy": "squash",
+  "mergeTarget": "/cascade/change_log/summary.md"
+} -->
+# Global Planning Notes (Rolling)
+
+This file serves as a rolling buffer for general planning notes, ideas, or tracking multi-step tasks that span several cycles.
+
+---
+## Usage
+- Append new notes or update existing sections.
+- When `maxEntries` (e.g., 10, as an example here) is reached, older entries might be evicted or merged.
+- The `mergePolicy` (e.g., `squash`) and `mergeTarget` (e.g., `/cascade/change_log/summary.md`) would define how its content is preserved long-term if needed, though these are illustrative here and should be set based on actual workflow.
+- For domain-specific planning, consider creating separate files (e.g., `planning_notes_client.md`).
+
+---
+## Current Notes:
+
+*(No notes yet. Add dated entries or task-specific sections below.)*
+
+---
+### Example Entry Format:
+```
+---
+**Date:** YYYY-MM-DD
+**Task/Topic:** Brief description
+**Notes:**
+- Point 1
+- Point 2
+- Action items...
+---
+```
+""")
+
+# /cascade/security/ files
+add_file_content("cascade/security/security_review.md", """\
+<!-- @meta {
+  "fileType": "append-only",
+  "purpose": "Log of manual or AI-driven security reviews, findings, and approvals for high-risk actions.",
+  "editPolicy": "appendOnly",
+  "routeScope": "security"
+} -->
+# Security Review Log
+
+This file contains an append-only log of all security reviews conducted. This includes reviews for:
+- High-risk actions flagged with `requiresReview: true` in job plans.
+- Modifications to critical system files (e.g., `system_manifest.md`, protocol files).
+- Escalated permissions or overrides of `readonly`, `immutable`, or `protected` policies.
+- Findings from manual or automated security audits.
+- Approvals or rejections of proposed changes.
+
+---
+## Entry Format
+Each entry should be clearly timestamped and include:
+- **Date/Timestamp:** When the review was conducted.
+- **Reviewer(s):** Who conducted the review (human agent ID or AI agent version).
+- **Subject:** What was reviewed (e.g., Job Plan ID, file path, proposed change).
+- **Details/Findings:** A summary of the review process and any findings.
+- **Decision/Outcome:** Approved, Rejected, Needs More Info, etc.
+- **Rationale:** Justification for the decision.
+- **Associated Hashes:** (If applicable) Hashes of files before and after an approved change.
+
+---
+## Example Entry:
+```
+---
+**Date/Timestamp:** 2025-07-15T10:30:00Z
+**Reviewer(s):** human_admin_chris, ai_agent_jules_v1.2
+**Subject:** Proposed modification to `/cascade/system_manifest.md` (Job Plan: job_temp_a1b2c3d4)
+**Details/Findings:**
+- Intent: Add new domain 'experimental_features'.
+- Impact assessment: Low risk, isolated domain.
+- Hash before: manifest_hash_v1_old
+- Hash after (proposed): manifest_hash_v2_new
+**Decision/Outcome:** Approved
+**Rationale:** The new domain is well-defined and does not interfere with existing core domains. All necessary index files for the domain are included in the job plan.
+**Associated Hashes:**
+- `/cascade/system_manifest.md` (before): sha256-abc...
+- `/cascade/system_manifest.md` (after): sha256-def...
+---
+```
+
+---
+*(No review entries yet)*
+""")
+
+add_file_content("cascade/security/write_gates.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Defines glob patterns and path constraints to control which files can be written to. Acts as a write-time firewall.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "security"
+} -->
+# Write Gates Policy
+
+This file defines the write gate policies for the ContextCascade system. It uses glob patterns and explicit path declarations to allow or deny write operations to specific files or directories. This acts as a crucial safeguard to prevent unintended or unauthorized modifications.
+
+---
+## Gate Configuration Format
+Write gates are typically defined in a structured format, often YAML-like, within this document. The system will parse this section to enforce rules during the pre-WRITE validation phase.
+
+**Key Principles:**
+- **Deny by Default (Recommended):** It's often safer to deny writes to broad areas and then explicitly allow specific paths.
+- **Specificity:** More specific rules usually override broader ones (though the exact precedence logic depends on the validator's implementation).
+- **`allow` vs. `deny`:** Clearly state the intent.
+- **`appendOnly` flag:** Can be used to allow writes but only in append mode for certain paths.
+
+---
+## Example Gate Configuration:
+```yaml
+writeGates:
+  # Deny writes to all protocol files by default
+  - deny: "/cascade/protocols/*"
+  # But allow appendOrReplace to file_lifespans if specifically planned
+  - allow: "/cascade/protocols/file_lifespans.md"
+    editPolicy: "appendOrReplace" # Explicitly state allowed edit type
+
+  # Immutable files - generally deny all direct writes
+  - deny: "/cascade/00_BOOTSTRAP.md"
+  - deny: "/cascade/system_manifest.md"
+  - deny: "/cascade/init_context.md"
+  # (Overrides for immutable files should be exceptional and logged via security_review.md)
+
+  # Allow writes to job logs (temp_job is overwrite, others appendOnly)
+  - allow: "/cascade/job_logs/temp_job.md"
+    editPolicy: "overwrite"
+  - allow: "/cascade/job_logs/recent.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/job_logs/summary.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/job_logs.md" # The index file
+    editPolicy: "appendOrReplace"
+
+
+  # Allow writes to change logs (recent is appendOnly, summary is appendOnly)
+  - allow: "/cascade/change_log/recent.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/change_log/summary.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/change_log.md" # The index file
+    editPolicy: "appendOrReplace"
+
+  # Lifecycle counters are incrementOnly (a form of append)
+  - allow: "/cascade/lifecycle/*.md" # Individual counters
+    editPolicy: "incrementOnly" # Or appendOnly if incrementOnly is not a direct metadata policy
+  - allow: "/cascade/lifecycle.md" # The index file
+    editPolicy: "appendOrReplace"
+
+
+  # Load plans are evictable and can be overwritten
+  - allow: "/cascade/load_plans/*.md"
+    editPolicy: "overwrite"
+
+  # Taskbuffers are temporary and can be overwritten
+  - allow: "/cascade/_taskbuffers/*.md"
+    editPolicy: "overwrite"
+
+  # Temp notes are rolling and can be appended to or sections replaced
+  - allow: "/cascade/temp_notes/*.md"
+    editPolicy: "appendOrReplace"
+
+  # Audit files are generally append-only or managed by specific processes
+  - allow: "/cascade/audit/meta_audit.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/audit/token_summary.md" # May be overwritten by analysis tools
+    editPolicy: "overwrite"
+  - allow: "/cascade/audit/integrity_snapshot.md" # Usually appendOnly, or specific update process
+    editPolicy: "appendOnly"
+  - allow: "/cascade/audit/prune_plan.md" # Evictable, can be overwritten
+    editPolicy: "overwrite"
+
+
+  # Checkpoints are append-only
+  - allow: "/cascade/checkpoints/loop_checkpoint.md"
+    editPolicy: "appendOnly"
+
+  # Domain files - index files are often appendOnly or appendOrReplace
+  # Content files within domains might have varying policies
+  - allow: "/cascade/domains/*/index.md"
+    editPolicy: "appendOrReplace"
+  - allow: "/cascade/domains/*/*.md" # Be more specific for actual domain content files
+    editPolicy: "appendOrReplace" # Default, can be overridden by file's own metadata
+
+  # Security files themselves
+  - allow: "/cascade/security/security_review.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/security/write_gates.md" # This file itself
+    editPolicy: "appendOrReplace" # Needs to be editable, but with high review threshold
+
+  # Meta files
+  - allow: "/cascade/_meta/*.md"
+    editPolicy: "appendOrReplace" # e.g., for cascade_feature_index.md
+
+  # Deny everything else within /cascade/ by default if not explicitly allowed
+  # This is a strong safeguard but requires diligent 'allow' rules.
+  # - deny: "/cascade/**" (Use with caution and ensure all legitimate paths are allowed above)
+
+```
+---
+## Current Gate Configuration:
+
+# (Define your YAML or structured list of rules here)
+# Example:
+writeGates:
+  - deny: "/cascade/protocols/*"
+  - allow: "/cascade/protocols/file_lifespans.md"
+    editPolicy: "appendOrReplace"
+  - deny: "/cascade/00_BOOTSTRAP.md"
+  - deny: "/cascade/system_manifest.md"
+  - deny: "/cascade/init_context.md"
+  - allow: "/cascade/job_logs/temp_job.md"
+    editPolicy: "overwrite"
+  - allow: "/cascade/job_logs/*.md" # recent.md, summary.md, job_logs.md (index)
+    editPolicy: "appendOnly" # Default, specific files can refine
+  - allow: "/cascade/change_log/*.md" # recent.md, summary.md, change_log.md (index)
+    editPolicy: "appendOnly" # Default
+  - allow: "/cascade/lifecycle/*.md"
+  - allow: "/cascade/lifecycle.md"
+    editPolicy: "appendOrReplace"
+  - allow: "/cascade/load_plans/*.md"
+    editPolicy: "overwrite"
+  - allow: "/cascade/_taskbuffers/*.md"
+    editPolicy: "overwrite"
+  - allow: "/cascade/temp_notes/*.md"
+    editPolicy: "appendOrReplace"
+  - allow: "/cascade/audit/meta_audit.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/audit/token_summary.md"
+    editPolicy: "overwrite"
+  - allow: "/cascade/audit/integrity_snapshot.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/audit/prune_plan.md"
+    editPolicy: "overwrite"
+  - allow: "/cascade/checkpoints/loop_checkpoint.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/domains/**" # Broad allow for domains, individual files should have stricter policies
+    editPolicy: "appendOrReplace"
+  - allow: "/cascade/security/security_review.md"
+    editPolicy: "appendOnly"
+  - allow: "/cascade/security/write_gates.md" # This file
+    editPolicy: "appendOrReplace"
+  - allow: "/cascade/_meta/*.md"
+    editPolicy: "appendOrReplace"
+  - allow: "/cascade/index.md"
+    editPolicy: "appendOnly"
+
+---
+## Maintenance
+- Changes to this file are considered high-risk and **must** be logged in `/cascade/security/security_review.md`.
+- Regularly audit these gates against the actual file structure and intended edit policies.
+- Ensure the parsing logic in the AI agent or validator correctly interprets these rules.
+""")
+
+# /cascade/audit/ files
+add_file_content("cascade/audit/integrity_snapshot.md", """\
+<!-- @meta {
+  "fileType": "append-only",
+  "purpose": "A canonical ledger of cryptographic hashes (SHA-256) for all immutable and protected files in the cascade.",
+  "editPolicy": "appendOnly",
+  "routeScope": "audit"
+} -->
+# Integrity Snapshot
+
+This file acts as a tamper-evident seal for the ContextCascade system. It stores a list of file paths and their corresponding SHA-256 hashes for all files declared as `immutable` or containing `protected` sections.
+
+---
+## Format
+Each line in the snapshot represents a tracked file:
+`<file_path>: "<sha256_hash>"`
+
+---
+## Usage
+- **Initial Hashing:** When a file is first marked `immutable` or a `protected` section is defined and committed, its hash is calculated and appended to this list.
+- **Verification:** During each loop (especially pre-WRITE and post-WRITE phases for relevant operations), the system:
+    1. Reads the current content of each file listed here.
+    2. Recomputes its SHA-256 hash.
+    3. Compares it against the stored hash in this snapshot.
+- **Mismatch:** If a hash mismatch is detected:
+    - The operation (e.g., WRITE) is typically aborted.
+    - A `hashMismatch` event is logged in `/cascade/audit/meta_audit.md`.
+    - `/cascade/lifecycle/drift_flag.md` may be raised.
+
+---
+## Example Entries:
+```
+/cascade/00_BOOTSTRAP.md: "a1b2c3d4e5f6..."
+/cascade/system_manifest.md: "f6e5d4c3b2a1..."
+/cascade/protocols/loop_protocol.md: "1a2b3c4d5e6f..."
+```
+
+---
+## Current Snapshot:
+
+*(This section is populated automatically by the system when immutable files are created/updated through a secure process, or when protected sections are defined. Manual additions should be done with extreme care and typically involve a security review.)*
+
+*(No snapshot entries yet)*
+
+---
+## Maintenance
+- Entries should only be added or updated through a verified and secure process.
+- Modifying an `immutable` file legitimately (e.g., a planned doctrine update) requires:
+    1. A security review process (logged in `/cascade/security/security_review.md`).
+    2. Approval for the change.
+    3. Re-hashing the file.
+    4. Appending the new hash to this snapshot (often with a comment indicating the version or change reason). The old hash entry might be commented out or archived, rather than deleted, for historical tracking.
+- `editPolicy: appendOnly` ensures history is preserved. Updates to existing file hashes mean appending a new line for that file, versioning it.
+""")
+
+add_file_content("cascade/audit/meta_audit.md", """\
+<!-- @meta {
+  "fileType": "append-only",
+  "purpose": "A persistent log for drift, contradictions, anomalies, safeguard violations, or other significant meta-level system events.",
+  "editPolicy": "appendOnly",
+  "routeScope": "audit"
+} -->
+# Meta Audit Log
+
+This file serves as an append-only log for critical system events, particularly those related to inconsistencies, safeguard violations, lifecycle deviations, and recovery actions. It is a key resource for debugging, understanding system behavior, and ensuring traceability.
+
+---
+## Logged Events
+This log should capture events such as:
+- **Drift Detection:**
+    - `hashMismatch`: An `immutable` or `protected` file's hash does not match the `integrity_snapshot.md`.
+    - `validatorDiff`: Schema or structural differences detected by validators.
+    - `unexpectedMutation`: A file was changed without a corresponding job plan.
+    - `counterSkip`: A lifecycle counter did not increment as expected.
+- **Safeguard Violations:**
+    - `protectedOverlap`: Attempted edit within a `<!-- PROTECTED -->` block.
+    - `gateViolation`: Write attempt blocked by `/security/write_gates.md`.
+    - `lockConflict`: `active_edit.lock` prevented an operation.
+    - `immutableWriteAttempt`: Attempt to write to an `immutable` file without proper override.
+- **Lifecycle Events:**
+    - `recovery-start`: Recovery protocol initiated.
+    - `recovery-step`: Specific actions taken during recovery.
+    - `recovery-complete`: Recovery protocol finished.
+    - `staleFilePruned`: An expired file was removed.
+    - `summaryMerge`: Details of a summary merge operation.
+- **Security Events:**
+    - `securityReviewTriggered`: A high-risk action requiring review was initiated.
+    - `permissionEscalation`: An operation required escalated privileges.
+- **External Integration Events:**
+    - `externalHookSent`: An external hook was triggered.
+    - `externalHookFailed`: An external hook failed.
+
+---
+## Entry Format
+Each entry should be clearly timestamped and structured, potentially using a consistent format (e.g., Markdown list items, YAML blocks, or JSON objects if preferred for machine parsing).
+
+**Example Markdown List Item Format:**
+```
+---
+- **Timestamp:** YYYY-MM-DDTHH:mm:ssZ
+  **Type:** `hashMismatch`
+  **Severity:** CRITICAL
+  **Details:** Hash for `/cascade/system_manifest.md` does not match `integrity_snapshot.md`. Expected: `abc...`, Actual: `def...`.
+  **Source:** Pre-WRITE validation (Loop ID: 157)
+  **ActionTaken:** WRITE aborted. `/lifecycle/drift_flag.md` raised.
+---
+- **Timestamp:** YYYY-MM-DDTHH:mm:ssZ
+  **Type:** `recovery-start`
+  **Severity:** INFO
+  **Details:** Recovery protocol initiated due to `drift_flag.md`.
+  **Source:** System Recovery Agent
+---
+```
+
+---
+## Current Audit Log:
+
+*(This log is appended to by the system as events occur. No entries yet.)*
+
+---
+## Maintenance
+- This file is append-only. Existing entries must not be altered.
+- Ensure consistent formatting for entries to aid parsing and review.
+- Regularly review this log for patterns or recurring issues.
+- For very high-volume systems, consider log rotation strategies if file size becomes an issue, though the primary intent is a persistent, complete record.
+""")
+
+add_file_content("cascade/audit/prune_plan.md", """\
+<!-- @meta {
+  "fileType": "evictable",
+  "purpose": "Defines and executes controlled cleanup operations for temporary, expired, or unnecessary files.",
+  "editPolicy": "overwrite",
+  "routeScope": "audit",
+  "ttlCycles": 3
+} -->
+# Prune Plan
+
+This file outlines the policies and can trigger actions for deleting or archiving temporary, expired, or unnecessary files from the ContextCascade system. Its goal is to prevent performance degradation, memory bloat, and stale context leakage.
+
+---
+## Pruning Policies & Targets
+This section defines what gets pruned and when. Policies are typically based on file metadata like `fileType`, `ttlCycles`, and `expirationPolicy`.
+
+**Common Targets for Pruning:**
+- **`temporary` files:** Files in `_taskbuffers/`, `job_logs/temp_job.md` (after `ttlCycles: 1` by default).
+- **`evictable` files:** Files in `load_plans/` or other cache-like locations after their `ttlCycles` expire.
+- **`rolling` buffers (entries):** Old entries in rolling buffers if not handled by merge logic (though merging is preferred).
+- **Stale `active_edit.lock` files:** If `_locks/active_edit.lock` is old and no process is active.
+- **Empty directories:** Directories that become empty after pruning.
+
+---
+## Pruning Triggers
+Pruning can be triggered:
+1.  **Automatically:**
+    *   At the end of a WRITE cycle, based on `ttlCycles` countdowns.
+    *   When lifecycle counters hit `prune_threshold` as defined in `/protocols/file_lifespans.md`.
+2.  **Manually/AI-Initiated:**
+    *   By an explicit prompt or command (e.g., "Execute prune plan to clear expired files").
+    *   As part of a recovery process (`/protocols/recovery.md`).
+3.  **Scheduled:** (If the system supports it) As a periodic maintenance task.
+
+---
+## Example Prune Plan Execution Script/Instructions (Conceptual)
+This section could contain a plan that the AI executes.
+
+```
+## Prune Plan - YYYY-MM-DD
+
+**Objective:** Clean up expired and temporary files.
+
+**Phase 1: Identify Candidates**
+1. Scan all files with `fileType: temporary`.
+   - If `ttlCycles` has reached 0 or is not set (defaults to 1 for temporary), mark for deletion.
+2. Scan all files with `fileType: evictable`.
+   - If `ttlCycles` has reached 0, mark for deletion.
+3. Check `/cascade/_locks/active_edit.lock`:
+   - If timestamp older than (e.g., 1 hour) AND no active write process confirmed, mark for deletion.
+4. List all files marked for deletion.
+
+**Phase 2: Review (Optional)**
+- Present list of files to be pruned to user/AI for confirmation if in interactive mode or if total size > X MB.
+
+**Phase 3: Execute Pruning**
+1. For each marked file:
+   - If `expirationPolicy: archiveOnExpire` is set, move to `/cascade/_archive/YYYY-MM-DD/` (maintaining path).
+   - Else, delete the file.
+2. Log all actions (deleted/archived files) to `/cascade/audit/meta_audit.md` with type `staleFilePruned` or `fileArchived`.
+
+**Phase 4: Cleanup**
+1. Scan for any empty directories within `/cascade/` (except `_taskbuffers`, `load_plans`, `temp_notes` which might be intentionally empty awaiting new files) and list them for potential removal if policy dictates.
+
+---
+```
+
+## Current Prune Plan Status:
+
+*(This file is `evictable` and `overwrite`. It would be generated or updated when a prune operation is planned or executed. Currently idle.)*
+
+**Last Execution:** (Timestamp or N/A)
+**Next Scheduled (if applicable):** (Timestamp or N/A)
+
+---
+## Instructions for AI:
+- To initiate a prune, you can generate a specific execution plan in this file (as per the example above).
+- Then, during an ACT phase, reason over this plan and prepare the necessary delete/archive operations for the WRITE phase.
+- Always log pruning actions to `/cascade/audit/meta_audit.md`.
+- Respect `expirationPolicy` metadata on files. If `archiveOnExpire` is set, move the file instead of deleting.
+""")
+
+add_file_content("cascade/audit/token_summary.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Tracks estimated and actual token footprints of files and cascade branches to aid in budget awareness.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "audit"
+} -->
+# Token Usage Summary
+
+This file stores data related to the token footprint of files and cascade branches. It helps the AI maintain token budget awareness, make informed decisions during context loading (especially in Lean Mode), and anticipate memory usage.
+
+---
+## Structure
+This file might contain:
+- **Per-file estimates:**
+    - File path.
+    - Estimated token count (based on heuristics, word count, or previous actuals).
+    - Actual token count from the last time it was loaded.
+    - Timestamp of the last actual count.
+- **Per-domain/branch summaries:**
+    - Domain path (e.g., `/cascade/client/`).
+    - Total estimated token count for all files in that domain.
+    - Total actual token count.
+- **Global summary:**
+    - Total estimated and actual token counts for the entire cascade.
+
+---
+## Example Content:
+```
+## Global Summary
+- Total Estimated Tokens: 15200
+- Total Actual Tokens (last full load): 14850
+- Last Full Load Timestamp: 2025-07-15T10:00:00Z
+
+---
+## Per-Domain Summaries
+
+### /cascade/client/
+- Estimated Tokens: 3500
+- Actual Tokens: 3320
+- Files Tracked: 5
+
+### /cascade/protocols/
+- Estimated Tokens: 1200
+- Actual Tokens: 1150
+- Files Tracked: 4
+
+---
+## Per-File Details (Sample)
+
+| File Path                          | Estimated Tokens | Actual Tokens (Last Load) | Last Actual Timestamp  |
+|------------------------------------|------------------|---------------------------|------------------------|
+| /cascade/00_BOOTSTRAP.md           | 150              | 145                       | 2025-07-15T09:00:00Z   |
+| /cascade/index.md                  | 200              | 190                       | 2025-07-15T09:00:00Z   |
+| /cascade/domains/client/index.md   | 450              | 430                       | 2025-07-15T09:05:00Z   |
+| ...                                | ...              | ...                       | ...                    |
+
+```
+
+---
+## Current Token Summary:
+
+*(This section should be populated by an automated process or the AI based on file analysis and loading history.)*
+
+**Last Updated:** (Timestamp)
+
+*(No summary data yet)*
+
+---
+## Maintenance
+- The AI or an external script should periodically update this file.
+- Estimates can be generated via dry-run parsing or using heuristics.
+- Actual token counts should be logged after files are loaded into context.
+- This file itself can become large; consider strategies for summarization or rotation if it impacts performance.
+- `editPolicy: appendOrReplace` allows for the file to be wholly updated by a token counting process.
+""")
+
+# /cascade/checkpoints/ files
+add_file_content("cascade/checkpoints/loop_checkpoint.md", """\
+<!-- @meta {
+  "fileType": "append-only",
+  "purpose": "Sequential log recording the successful completion of each full READ-ACT-WRITE cascade loop.",
+  "editPolicy": "appendOnly",
+  "routeScope": "audit"
+} -->
+# Loop Checkpoint Log
+
+This file contains an append-only, sequential log that records the successful completion of each full ContextCascade loop (READ → ACT → WRITE). It serves as a crucial audit trail for system progression, rollback orchestration, and session reconstruction.
+
+---
+## Entry Format
+Each entry signifies one successfully completed loop and should be recorded after all post-WRITE tasks (hash checks, confirmations, summary updates) are finished.
+
+A structured format is recommended for each entry:
+
+```
+---
+- **LoopID:** (Sequential integer or unique identifier, e.g., timestamp or global counter value)
+  **Timestamp:** YYYY-MM-DDTHH:mm:ssZ (UTC)
+  **JobPlanReference:** (Path or hash of the `job_logs/temp_job.md` that was executed)
+  **FilesWritten:**
+    - path: `/path/to/file1.md`
+      hashAfter: "sha256-hash1..."
+    - path: `/path/to/file2.md`
+      hashAfter: "sha256-hash2..."
+  **CountersIncremented:**
+    - global: value_after
+    - client: value_after (if client domain was affected)
+    - server: value_after (if server domain was affected)
+    - ... (other affected domain counters)
+  **Outcome:** `success` (This file should only log successful loops. Failures are logged in `meta_audit.md`)
+  **PostHashCheck:** `confirmed` | `warning` (if minor, non-critical discrepancies were noted but accepted)
+---
+```
+
+---
+## Usage
+- **Traceability:** Provides a clear history of system operations.
+- **Rollback:** Helps identify known-good states to roll back to if drift or corruption occurs.
+- **Session Reconstruction:** Can assist in understanding the sequence of operations during an audit or debugging session.
+- **Drift Detection:** Gaps in LoopIDs or timestamps might indicate missed cycles or system interruptions, prompting a look at `meta_audit.md`.
+
+---
+## Current Checkpoints:
+
+*(This log is appended to by the system automatically after each successful WRITE cycle. No checkpoints yet.)*
+
+---
+## Maintenance
+- This file is strictly append-only. Existing entries must never be modified or deleted.
+- Ensure the LoopID is unique and preferably sequential.
+- If a WRITE cycle fails or is aborted, no entry should be written here for that cycle. Failures are documented in `/cascade/audit/meta_audit.md`.
+""")
+
+# /cascade/domains/client/ files
+add_file_content("cascade/domains/client/index.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Index and routing map for all files and sub-modules within the 'client' domain.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "client"
+} -->
+# Client Domain Index
+
+This file serves as the master index for all memory, guidance, and specification files related to the 'client' domain of the application. It helps in targeted context loading and routing for client-specific tasks.
+
+---
+## Structure
+This index typically lists key files or sub-directories within the `/cascade/domains/client/` path. Each entry might specify the role or type of content.
+
+| Path within Client Domain | Role / Description                 | `fileType` (if specific) |
+|---------------------------|------------------------------------|--------------------------|
+| `architecture.md`         | Client-side architecture decisions | `permanent`              |
+| `key_decisions.md`        | Key architectural decisions        | `permanent`              |
+| `README.md`               | Overview of client domain memory   | `permanent`              |
+| `conventions.md`          | Client coding/naming conventions   | `permanent`              |
+| `state_management.md`     | Client state management strategy   | `permanent`              |
+| `components/`             | Directory for component specs      | (directory)              |
+| `components/button.md`    | Specification for Button component | `permanent`              |
+| `api_interfaces.md`       | Client-side view of API contracts  | `permanent`              |
+| `client_summary.md`       | Rolling summary of client changes  | `rolling`                |
+
+*(This is an example structure. Populate with actual files as they are created for the client domain.)*
+
+---
+## Current Client Domain Index:
+
+| Path                                             | Role / Description                 |
+|--------------------------------------------------|------------------------------------|
+| `/cascade/domains/client/architecture.md`        | Client-side architecture decisions |
+| `/cascade/domains/client/key_decisions.md`       | Key architectural decisions        |
+| `/cascade/domains/client/README.md`              | Overview of client domain memory   |
+
+
+*(Add more entries as client-specific memory files are created.)*
+""")
+
+add_file_content("cascade/domains/client/architecture.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Documents the client-side architecture decisions and patterns.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "client"
+} -->
+# Client Architecture
+
+This document outlines the high-level architecture for the client-side of the application.
+
+*(Content to be filled in, e.g., chosen framework (React, Vue, Angular), state management approach (Redux, Vuex, Context API), component structure, key libraries, build process, etc.)*
+""")
+
+add_file_content("cascade/domains/client/key_decisions.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Records key architectural and technical decisions made for the client domain.",
+  "editPolicy": "appendOnly",
+  "routeScope": "client"
+} -->
+# Key Decisions (Client Domain)
+
+This document is an append-only log of significant architectural and technical decisions made for the client domain.
+
+---
+## Format
+Each entry should include:
+- **Date:** YYYY-MM-DD
+- **Decision:** A clear statement of the decision made.
+- **Rationale:** The reasons behind the decision, alternatives considered, and trade-offs.
+- **Impact:** Expected impact on the client application.
+- **Status:** Proposed, Accepted, Deprecated.
+
+---
+### Example Entry
+```
+---
+**Date:** 2023-10-26
+**Decision:** Adopt Zustand for global state management.
+**Rationale:** Lightweight, simple API, good performance, and less boilerplate compared to Redux for our current needs. Context API was considered but Zustand offers betterdevtools and performance characteristics for complex states.
+**Impact:** Affects how new features manage shared state. Existing Context API usages to be refactored incrementally.
+**Status:** Accepted
+---
+```
+
+*(Add new decisions as they are made.)*
+""")
+
+add_file_content("cascade/domains/client/README.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Overview of the client domain memory within ContextCascade.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "client"
+} -->
+# Client Domain README
+
+This file provides an overview of the memory and guidance documents stored within the `/cascade/domains/client/` directory. These documents are intended to guide AI and human developers in maintaining and extending the client-side of the application consistently.
+
+Refer to `/cascade/domains/client/index.md` for a full list of documents in this domain.
+""")
+
+
+# /cascade/domains/schema/ files
+add_file_content("cascade/domains/schema/index.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Index and routing map for all files related to data schemas, validation rules, and API contracts.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "schema"
+} -->
+# Schema Domain Index
+
+This file serves as the master index for all memory, guidance, and specification files related to data schemas, validation rules, API contracts, and other structural definitions of the application.
+
+---
+## Structure
+This index typically lists key files or sub-directories within the `/cascade/domains/schema/` path.
+
+| Path within Schema Domain | Role / Description                     | `fileType` (if specific) |
+|---------------------------|----------------------------------------|--------------------------|
+| `README.md`               | Overview of schema domain memory       | `permanent`              |
+| `database_schema.md`      | Database ERD and table definitions     | `permanent`              |
+| `api_contracts.md`        | Detailed API endpoint specifications   | `permanent`              |
+| `validation_rules.md`     | Business logic validation rules        | `permanent`              |
+| `data_types.md`           | Common data type definitions           | `permanent`              |
+| `schema_versions/`        | Directory for versioned schema snapshots | (directory)              |
+| `schema_summary.md`       | Rolling summary of schema changes      | `rolling`                |
+
+*(This is an example structure. Populate with actual files as they are created for the schema domain.)*
+
+---
+## Current Schema Domain Index:
+
+| Path                                     | Role / Description               |
+|------------------------------------------|----------------------------------|
+| `/cascade/domains/schema/README.md`      | Overview of schema domain memory |
+
+*(Add more entries as schema-specific memory files are created.)*
+""")
+
+add_file_content("cascade/domains/schema/README.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Overview of the schema domain memory within ContextCascade.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "schema"
+} -->
+# Schema Domain README
+
+This file provides an overview of the memory and guidance documents stored within the `/cascade/domains/schema/` directory. These documents pertain to data schemas, API contracts, validation rules, and other structural definitions.
+
+Refer to `/cascade/domains/schema/index.md` for a full list of documents in this domain.
+""")
+
+
+# /cascade/domains/server/ files
+add_file_content("cascade/domains/server/index.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Index and routing map for all files and sub-modules within the 'server' domain.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "server"
+} -->
+# Server Domain Index
+
+This file serves as the master index for all memory, guidance, and specification files related to the 'server' domain of the application (backend logic, APIs, services, etc.). It helps in targeted context loading and routing for server-specific tasks.
+
+---
+## Structure
+This index typically lists key files or sub-directories within the `/cascade/domains/server/` path.
+
+| Path within Server Domain | Role / Description                  | `fileType` (if specific) |
+|---------------------------|-------------------------------------|--------------------------|
+| `README.md`               | Overview of server domain memory    | `permanent`              |
+| `architecture.md`         | Server-side architecture decisions  | `permanent`              |
+| `api_implementation.md`   | Details on API endpoint logic       | `permanent`              |
+| `services.md`             | Overview of microservices/modules   | `permanent`              |
+| `database_interactions.md`| How server interacts with database  | `permanent`              |
+| `auth_flow.md`            | Server-side authentication flow     | `permanent`              |
+| `server_summary.md`       | Rolling summary of server changes   | `rolling`                |
+
+*(This is an example structure. Populate with actual files as they are created for the server domain.)*
+
+---
+## Current Server Domain Index:
+
+| Path                                   | Role / Description               |
+|----------------------------------------|----------------------------------|
+| `/cascade/domains/server/README.md`    | Overview of server domain memory |
+
+*(Add more entries as server-specific memory files are created.)*
+""")
+
+add_file_content("cascade/domains/server/README.md", """\
+<!-- @meta {
+  "fileType": "permanent",
+  "purpose": "Overview of the server domain memory within ContextCascade.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "server"
+} -->
+# Server Domain README
+
+This file provides an overview of the memory and guidance documents stored within the `/cascade/domains/server/` directory. These documents pertain to the backend logic, APIs, services, and overall server-side architecture.
+
+Refer to `/cascade/domains/server/index.md` for a full list of documents in this domain.
+""")
+
+
+# /cascade/_locks/ files
+add_file_content("cascade/_locks/active_edit.lock", """\
+<!-- @meta {
+  "fileType": "temporary",
+  "subtype": "editSession",
+  "purpose": "Prevents concurrent WRITE operations by signalling an active edit session.",
+  "editPolicy": "replaceOnly",
+  "routeScope": "global",
+  "ttlCycles": 1,
+  "linkedAudits": ["audit/meta_audit.md", "lifecycle/drift_flag.md"]
+} -->
+
+### /_locks/active_edit.md
+
+> **Role:** Acts as a mutex for high-integrity WRITE phases.
+> If this lock is present and `status` ≠ `cleared`, any new job plan must halt until the lock is released or deemed **stale**.
+
+---
+
+#### Current Lock (state is overwritten every loop)
+
+| Timestamp (UTC)       | Locked By | Scope   | Job ID  | Status       |
+|-----------------------|-----------|---------|---------|--------------|
+| _none_                | —         | —       | —       | cleared      |
+
+**Status values**
+
+| Value        | Meaning                                                    |
+|--------------|------------------------------------------------------------|
+| `in-progress`| WRITE or MERGE currently running                           |
+| `failed`     | Job aborted; manual review needed before clearing          |
+| `stale`      | TTL elapsed without matching Job ID; safe-to-clear flag    |
+| `cleared`    | No active lock; safe to initiate new WRITE session         |
+
+---
+
+#### Lock Workflow
+
+1. **WRITE-start** → loop controller writes lock entry (`in-progress`).
+2. **WRITE-end**   → controller updates `status: cleared` *or* `failed`.
+3. **Next loop**   → if `status` ≠ `cleared`, ACT halts planning, logs issue:
+   - `/lifecycle/drift_flag.md` (flag)
+   - `/audit/meta_audit.md`  (audit row)
+
+If `status` becomes `stale`, a maintenance job can replace this file with the placeholder **cleared** row above.
+
+---
+
+**Summary**
+`active_edit.md` enforces sequential state commits, protecting the cascade from race-condition corruption. Keep it overwrite-only and ensure every WRITE phase ends with a `cleared` status—or a flagged audit trail if problems arise.
+""")
+
+
+# /cascade/_meta/ files
+add_file_content("cascade/_meta/cascade_feature_index.md", """\
+<!-- @meta {
+  "fileType": "structural",
+  "subtype": "index",
+  "purpose": "Master feature catalogue and directory reference for the ContextCascade system. Derived from system documentation.",
+  "editPolicy": "appendOrReplace",
+  "routeScope": "meta"
+} -->
+# ContextCascade Feature Index & Catalogue
+
+This document provides a comprehensive index of all first-class features within the ContextCascade system, along with brief descriptions and references to their primary documentation or defining files. It is intended to be a quick reference for understanding the system's capabilities.
+
+---
+## Core Features
+
+1.  **Metadata Blocks**
+    *   **What**: Structured JSON-in-comment headers at the top of each file defining operational context.
+    *   **Why**: Encode attributes like `fileType`, `editPolicy`, `ttlCycles`, `routeScope` for automated behavior.
+    *   **Where**: All `.md` files in `/cascade/`. Validated by `validators/metadata_validator.ts`.
+    *   **Ref**: Documentation §2.5.1, §4.
+
+2.  **Canonical FileType Registry**
+    *   **What**: Formal registry of nine allowed file types (`permanent`, `immutable`, `rolling`, `append-only`, `temporary`, `counter`, `evictable`, `protected`, `structural`) and their aliases.
+    *   **Why**: Ensures consistent interpretation of file semantics.
+    *   **Where**: Defined in Documentation §3.2.1. Enforced by `validators/metadata_validator.ts`.
+    *   **Ref**: Documentation §2.5.2, §3.2.1.
+
+3.  **Read → ACT → WRITE Loop Protocol**
+    *   **What**: Disciplined three-phase protocol (Read, Act, Write) for every execution cycle.
+    *   **Why**: Ensures clarity, auditability, and safety.
+    *   **Where**: Defined in `/cascade/protocols/loop_protocol.md`.
+    *   **Ref**: Documentation §2.5.3, `/cascade/protocols/loop_protocol.md`.
+
+4.  **Load Modes (Lean, Domain, Full)**
+    *   **What**: Hierarchical strategies for reading context files (`Lean`, `Domain`, `Full`).
+    *   **Why**: Balances token budget and contextual completeness.
+    *   **Where**: Logic in `protocols/load_mode_logic.md` (conceptual, actual file may vary). Referenced by load plans and lifecycle counters.
+    *   **Ref**: Documentation §2.5.4.
+
+5.  **Load Plans**
+    *   **What**: Ephemeral markdown files defining the set of files for the next READ phase.
+    *   **Why**: Optimizes token use and ensures relevant context ingestion.
+    *   **Where**: `/cascade/load_plans/*.md` (e.g., `auto_plan_client.md`).
+    *   **Ref**: Documentation §2.5.5.
+
+6.  **Lifecycle Counters**
+    *   **What**: `.md` files tracking update activity for specific domains/contexts (e.g., `client_tick.md`).
+    *   **Why**: Trigger threshold-based logic (reloads, pruning, drift detection).
+    *   **Where**: `/cascade/lifecycle/*.md`. Integrated with `/cascade/protocols/file_lifespans.md`.
+    *   **Ref**: Documentation §2.5.6.
+
+7.  **File Lifespan Policies**
+    *   **What**: Declarative rules for when files should be reloaded, audited, merged, or deleted.
+    *   **Why**: Manages file freshness, memory integrity, prevents token bloat.
+    *   **Where**: `/cascade/protocols/file_lifespans.md`.
+    *   **Ref**: Documentation §2.5.7.
+
+8.  **Rolling Buffers**
+    *   **What**: Files maintaining a fixed number of recent entries (e.g., `change_log/recent.md`).
+    *   **Why**: Preserves short-term context efficiently.
+    *   **Where**: Metadata `fileType: rolling`, `maxEntries`.
+    *   **Ref**: Documentation §2.5.8.
+
+9.  **Append-Only Logs**
+    *   **What**: Historical files for events/changes in chronological order (e.g., `change_log/summary.md`).
+    *   **Why**: Tamper-evident logs, reliable historical tracing.
+    *   **Where**: Metadata `editPolicy: appendOnly`.
+    *   **Ref**: Documentation §2.5.9.
+
+10. **Temporary / One-Prompt Files**
+    *   **What**: Volatile, single-use files (e.g., `job_logs/temp_job.md`).
+    *   **Why**: Transient data, minimizing memory footprint.
+    *   **Where**: Metadata `fileType: temporary`, `ttlCycles: 1`. Typically in `_taskbuffers/`.
+    *   **Ref**: Documentation §2.5.10.
+
+11. **Evictable Caches**
+    *   **What**: Time-sensitive files for intermediate plans or temporary context (e.g., `load_plans/*.md`).
+    *   **Why**: Manages token efficiency by offloading short-term reasoning.
+    *   **Where**: Metadata `fileType: evictable`, `ttlCycles`.
+    *   **Ref**: Documentation §2.5.11.
+
+12. **Domain Routing**
+    *   **What**: Metadata-driven scoping (`domain: client`) for files and actions.
+    *   **Why**: Isolates context, prevents cross-domain contamination, improves token economy.
+    *   **Where**: `system_manifest.md`, domain index files (`domains/*/index.md`), file metadata.
+    *   **Ref**: Documentation §2.5.12.
+
+13. **Protected Sections**
+    *   **What**: Inline blocks (`<!-- PROTECTED --> ... <!-- END PROTECTED -->`) within editable files that are read-only.
+    *   **Why**: Prevents drift in critical logic or assumptions.
+    *   **Where**: Core control files like `loop_protocol.md`. Metadata `protected: true` at file level if entire file's sections are protected by this mechanism.
+    *   **Ref**: Documentation §2.5.13.
+
+14. **Write Gates**
+    *   **What**: Declarative safeguards using glob patterns to control writable files/paths.
+    *   **Why**: Protects architectural invariants, prevents rogue writes.
+    *   **Where**: `/cascade/security/write_gates.md`.
+    *   **Ref**: Documentation §2.5.14.
+
+15. **Immutable Files & Hash Verification**
+    *   **What**: Files that cannot be edited post-creation, tracked via cryptographic hashes.
+    *   **Why**: Ensures stability of core declarations (doctrine, manifests).
+    *   **Where**: Metadata `fileType: immutable`, `editPolicy: readonly`. Hashes in `/cascade/audit/integrity_snapshot.md`.
+    *   **Ref**: Documentation §2.5.15.
+
+16. **Integrity Snapshot**
+    *   **What**: Canonical ledger of SHA-256 hashes for immutable/protected files.
+    *   **Why**: Tamper-evidence seal, guarantees architectural trust.
+    *   **Where**: `/cascade/audit/integrity_snapshot.md`.
+    *   **Ref**: Documentation §2.5.16.
+
+17. **Active Edit Lock**
+    *   **What**: Volatile lockfile (`_locks/active_edit.lock`) signaling in-progress WRITE.
+    *   **Why**: Prevents overlapping WRITE operations, ensures serialization.
+    *   **Where**: `/cascade/_locks/active_edit.lock`.
+    *   **Ref**: Documentation §2.5.17.
+
+18. **Pre- & Post-Hash Checking**
+    *   **What**: Dual-phase SHA-256 hash validation before and after WRITE for key files.
+    *   **Why**: Detects corruption, unauthorized edits, ensures trustworthy state transitions.
+    *   **Where**: Integrated into WRITE lifecycle for `immutable`/`protected` files, checked against `integrity_snapshot.md`.
+    *   **Ref**: Documentation §2.5.18.
+
+19. **Job Plans**
+    *   **What**: Ephemeral planning artifacts (`job_logs/temp_job.md`) defining intended WRITE actions.
+    *   **Why**: Traceability, intentionality, human/system confirmation for changes.
+    *   **Where**: `/cascade/job_logs/temp_job.md`.
+    *   **Ref**: Documentation §2.5.19.
+
+20. **Write-Back Summary Confirmation**
+    *   **What**: Post-WRITE verification where AI re-inspects written files against the job plan.
+    *   **Why**: Guarantees WRITE operation succeeded exactly as intended.
+    *   **Where**: Outcomes logged in `change_log/recent.md` and `audit/meta_audit.md`.
+    *   **Ref**: Documentation §2.5.20.
+
+21. **Summary Merging**
+    *   **What**: System for condensing ephemeral files into durable summaries (e.g., `summary.md`).
+    *   **Why**: Prevents token saturation, ensures long-term context continuity.
+    *   **Where**: Controlled by metadata `mergeable`, `merge_target`, `merge_policy`.
+    *   **Ref**: Documentation §2.5.21.
+
+22. **Rolling Update Triggers**
+    *   **What**: Lightweight mechanisms to update auxiliary logs/summaries post-WRITE without full replan.
+    *   **Why**: Maintains freshness of recent context with minimal overhead.
+    *   **Where**: Metadata `rollingUpdate`, `mergeTarget`. Affects files like `change_log/recent.md`.
+    *   **Ref**: Documentation §2.5.22.
+
+23. **Eviction Policy & Prune Plan**
+    *   **What**: Rules and scripts defining how/when to delete/archive temporary or expired files.
+    *   **Why**: Prevents performance degradation, memory bloat, stale context.
+    *   **Where**: Master policy in `/cascade/audit/prune_plan.md`. Affects `_taskbuffers/`, `temp_notes/`, etc.
+    *   **Ref**: Documentation §2.5.23.
+
+24. **Token Budget Awareness**
+    *   **What**: System tracking estimated token footprint of files/branches.
+    *   **Why**: Prevents context overrun, enables smarter loading.
+    *   **Where**: Tracked in `/cascade/audit/token_summary.md`.
+    *   **Ref**: Documentation §2.5.24.
+
+25. **Validator Pipeline**
+    *   **What**: Utility (`validators/metadata_validator.ts`) for checking structural, metadata, and schema correctness.
+    *   **Why**: Protects from malformed inputs, undefined behaviors.
+    *   **Where**: `validators/metadata_validator.ts`. Errors to `meta_audit.md`.
+    *   **Ref**: Documentation §2.5.25.
+
+26. **Security Review & High-Risk Action Logging**
+    *   **What**: Protocol governing and logging high-risk operations (schema rewrites, critical file mods).
+    *   **Why**: Traceability and oversight for sensitive actions.
+    *   **Where**: Policy in `security/security_review.md`. Logs in `audit/meta_audit.md`. Job plan flag `requiresReview: true`.
+    *   **Ref**: Documentation §2.5.26.
+
+27. **Drift Flag & Meta Audit**
+    *   **What**: Mechanism for detecting and recording inconsistencies (`lifecycle/drift_flag.md`) and logging them (`audit/meta_audit.md`).
+    *   **Why**: Maintains systemic trust, enables forensic debugging.
+    *   **Where**: `/cascade/lifecycle/drift_flag.md`, `/cascade/audit/meta_audit.md`.
+    *   **Ref**: Documentation §2.5.27.
+
+28. **Hash Verification Workflow** (Subset of 15, 16, 18)
+    *   **What**: 4-step process: Recalc hash → Compare to snapshot → If mismatch → Halt + Log + Flag.
+    *   **Why**: Core to preventing architectural corruption.
+    *   **Where**: `integrity_snapshot.md`, `immutable` files.
+    *   **Ref**: Documentation §2.5.28.
+
+29. **Schema & Snapshot Testing**
+    *   **What**: Mechanism to capture structure, schema, metadata state at key milestones for regression testing and rollback.
+    *   **Why**: Guards against structural drift in critical definitions.
+    *   **Where**: Snapshots in `domains/schema/` or `audit/schema_snapshot.md`.
+    *   **Ref**: Documentation §2.5.29.
+
+30. **Extension Patterns (Counters, File Types)**
+    *   **What**: Structured protocol for introducing new components (custom counters, file types).
+    *   **Why**: Ensures extensibility while maintaining integrity.
+    *   **Where**: Definitions in `system_manifest.md`, `metadata_schemas.md` (conceptual).
+    *   **Ref**: Documentation §2.5.30.
+
+31. **External Integrations & Hooks**
+    *   **What**: Framework for interacting with external tools (CI/CD, ticketing).
+    *   **Why**: Bridges cascade planning with real-world systems.
+    *   **Where**: Logic in `external/` (conceptual). Metadata `external: true`, `externalHooks`.
+    *   **Ref**: Documentation §2.5.31.
+
+32. **Troubleshooting & Recovery Protocols**
+    *   **What**: Defined procedures for handling system failures or inconsistencies.
+    *   **Why**: Ensures system can be restored to a known good state.
+    *   **Where**: `/cascade/protocols/recovery.md`.
+    *   **Ref**: Documentation §2.5.32.
+
+33. **Index Map (System + Domain Indexes)**
+    *   **What**: Structured index files describing system layout and hierarchy.
+    *   **Why**: Enables deterministic boot, accurate routing, memory-aware loading.
+    *   **Where**: `/cascade/index.md` (global), `/cascade/domains/*/index.md` (domain-specific).
+    *   **Ref**: Documentation §2.5.33.
+
+34. **System Manifest (`system_manifest.md`)**
+    *   **What**: Foundational, immutable declaration of system structure, doctrine, routing.
+    *   **Why**: Anchor for cascade logic, ensures core invariants.
+    *   **Where**: `/cascade/system_manifest.md`.
+    *   **Ref**: Documentation §2.5.34.
+
+35. **Loop Checkpoint (`loop_checkpoint.md`)**
+    *   **What**: Sequential log recording successful completion of each full cascade loop.
+    *   **Why**: Traceability, rollback orchestration, drift detection.
+    *   **Where**: `/cascade/checkpoints/loop_checkpoint.md`.
+    *   **Ref**: Documentation §2.5.35 (first one).
+
+36. **Bootstrap Protocol (`00_BOOTSTRAP.md`)** (Note: Documentation has this as 2.5.35, but it's also 2.5.36 in a different numbering)
+    *   **What**: Mandatory system entrypoint file defining foundational rules and boot preconditions.
+    *   **Why**: Ensures sessions start from a clean, validated baseline.
+    *   **Where**: `/cascade/00_BOOTSTRAP.md`.
+    *   **Ref**: Documentation §1.4, §2.5.36 (or §2.5.35 last one), `/cascade/00_BOOTSTRAP.md`.
+
+---
+This index should be kept up-to-date as the ContextCascade system evolves.
+It is based on "ContextCascade Developer & User Documentation v1.0".
+""")
+
+# /cascade/validators/ files
+add_file_content("cascade/validators/metadata_validator.ts", """\
+// validators/metadata_validator.ts
+// -------------------------------------------------
+// ContextCascade Metadata Validator
+// -------------------------------------------------
+// Responsibilities:
+//   • Parse top-of-file `@meta` JSON blocks
+//   • Verify required fields per fileType / subtype
+//   • Enforce editPolicy + routeScope value constraints
+//   • Provide a structured API for loop controller
+//
+// Usage (inside loop controller):
+//   import { validateFile } from "./validators/metadata_validator";
+//   const report = validateFile(filePath, rawContent);
+//   if (!report.valid) throw new Error(report.message);
+// -------------------------------------------------
+
+import fs from "fs";
+
+// -------------------- Types ----------------------
+
+interface MetaBlock {
+  fileType: string;
+  purpose?: string;
+  editPolicy: "appendOnly" | "appendOrReplace" | "incrementOnly" | "readonly" | "replaceOnly" | "overwrite"; // Added overwrite
+  routeScope?: string;
+  [key: string]: unknown;
+}
+
+interface ValidationReport {
+  valid: boolean;
+  message: string;
+  warnings: string[];
+  meta?: MetaBlock;
+}
+
+// -------------------- Constants ------------------
+
+const REQUIRED_FIELDS = ["fileType", "editPolicy"] as const;
+const ALLOWED_FILE_TYPES = new Set([
+  "permanent",
+  "immutable",
+  "rolling",
+  "append-only",
+  "temporary",
+  "counter",
+  "evictable",
+  "protected",
+  "structural",
+  "policy", // Added from file_lifespans.md
+  "manifest", // Added from system_manifest.md
+  "initialization", // Added from init_context.md
+]);
+
+const ALLOWED_EDIT_POLICIES = new Set([
+  "appendOnly",
+  "appendOrReplace",
+  "incrementOnly",
+  "readonly",
+  "replaceOnly",
+  "overwrite", // Added for files like temp_job.md
+]);
+
+// -------------------- Helper Functions -----------
+
+function extractMeta(raw: string): { meta?: MetaBlock; remainder: string } {
+  const match = raw.match(/<!--\s*@meta\s*({[\s\S]*?})\s*-->/m);
+  if (!match) return { remainder: raw };
+  try {
+    // Attempt to strip // comments before parsing
+    let jsonString = match[1];
+    jsonString = jsonString.replace(/\/\/.*/g, '');
+    const meta = JSON.parse(jsonString);
+    return { meta, remainder: raw.replace(match[0], "") };
+  } catch (e) {
+    throw new Error("Invalid JSON in @meta block: " + e.message);
+  }
+}
+
+function validateMeta(meta: MetaBlock, filePath: string): ValidationReport {
+  const warnings: string[] = [];
+
+  // Required fields
+  for (const key of REQUIRED_FIELDS) {
+    if (!(key in meta)) {
+      return {
+        valid: false,
+        message: `Missing required field \"${key}\" in @meta for ${filePath}`,
+        warnings,
+      };
+    }
+  }
+
+  // fileType check
+  if (!ALLOWED_FILE_TYPES.has(meta.fileType)) {
+    // Add a warning for now instead of failing validation for unknown file types
+    // as the documentation mentions an extension mechanism.
+    // A stricter validation could be re-enabled if needed.
+    warnings.push(`Potentially invalid fileType \"${meta.fileType}\" in ${filePath}. It is not in the predefined set.`);
+  }
+
+  // editPolicy check
+  if (!ALLOWED_EDIT_POLICIES.has(meta.editPolicy)) {
+    return {
+      valid: false,
+      message: `Invalid editPolicy \"${meta.editPolicy}\" in ${filePath}`,
+      warnings,
+    };
+  }
+
+  // routeScope recommendation
+  if (!meta.routeScope) {
+    warnings.push(`routeScope missing in ${filePath} — recommend specifying domain or global.`);
+  }
+
+  return { valid: true, message: "OK", warnings, meta };
+}
+
+// -------------------- Public API -----------------
+
+export function validateFile(filePath: string, raw?: string): ValidationReport {
+  const content = raw ?? fs.readFileSync(filePath, "utf8");
+  try {
+    const { meta } = extractMeta(content);
+    if (!meta) {
+      return {
+        valid: false,
+        message: `No @meta block found in ${filePath}`,
+        warnings: [],
+      };
+    }
+    return validateMeta(meta, filePath);
+  } catch (e: any) {
+    return {
+      valid: false,
+      message: e.message,
+      warnings: []
+    };
+  }
+}
+
+// CLI utility (optional)
+if (require.main === module) {
+  const target = process.argv[2];
+  if (!target) {
+    console.error("Usage: ts-node cascade/validators/metadata_validator.ts <filePath>");
+    process.exit(1);
+  }
+  const report = validateFile(target);
+  if (report.valid) {
+    console.log("✔", target, "validated");
+    if (report.warnings.length) console.warn("Warnings:", report.warnings.join("; "));
+  } else {
+    console.error("✖", target, report.message);
+    if (report.warnings.length) console.warn("Warnings:", report.warnings.join("; "));
+    process.exit(2);
+  }
+}
+""")
+
 
 def create_repo_structure(base_path="."):
     """
@@ -35,62 +2427,53 @@ def create_repo_structure(base_path="."):
     # Create empty directories explicitly if they are not implicitly created by files
     # The ls() output shows directories with a trailing slash.
     # We need to ensure these are created if they don't contain files.
-    # Example: cascade/_taskbuffers/ is created by .gitkeep, but if .gitkeep wasn't there,
-    # we'd need to create cascade/_taskbuffers/ explicitly.
 
-    # From the ls() output, identify all unique directory paths
-    # This will be derived from the file paths in REPO_FILES keys
-    all_dirs = set()
-    for file_path_str in REPO_FILES.keys():
-        path_obj = pathlib.Path(file_path_str)
-        # Add all parent directories
-        for parent in path_obj.parents:
-            if parent != pathlib.Path("."): # Avoid adding '.' as a directory to create
-                all_dirs.add(str(parent))
+    # Define all directories that must exist based on Repo_Documentation_v1.md Section 3.1
+    # This list should be comprehensive.
+    # Directories are created if they don't exist.
+    # Parent directories are created automatically by Path.mkdir(parents=True).
+    # Sorting ensures parent directories are conceptually processed first, though mkdir handles it.
+    required_dirs = sorted([
+        "cascade",
+        "cascade/_locks",
+        "cascade/_meta",
+        "cascade/protocols",
+        "cascade/lifecycle",
+        "cascade/change_log",
+        "cascade/job_logs",
+        "cascade/load_plans",
+        "cascade/_taskbuffers",
+        "cascade/temp_notes",
+        "cascade/security",
+        "cascade/audit",
+        "cascade/checkpoints",
+        "cascade/domains",
+        "cascade/domains/client",
+        "cascade/domains/server",
+        "cascade/domains/schema",
+        "cascade/validators"
+        # Note: cascade/external and cascade/_archive are not in the initial list from docs
+        # but could be added if they are standard empty dirs to create.
+        # For now, sticking to Doc 3.1.
+    ])
 
-    # Add directories that were explicitly listed with trailing slashes in ls()
-    # and might be empty or only contain other directories initially
-    explicit_dirs_from_ls = [
-        "cascade/",
-        "cascade/_locks/",
-        "cascade/_meta/",
-        "cascade/_taskbuffers/",
-        "cascade/audit/",
-        "cascade/change_log/",
-        "cascade/checkpoints/",
-        "cascade/domains/",
-        "cascade/domains/client/",
-        "cascade/domains/schema/",
-        "cascade/domains/server/",
-        "cascade/job_logs/",
-        "cascade/lifecycle/",
-        "cascade/load_plans/",
-        "cascade/protocols/",
-        "cascade/security/",
-        "cascade/temp_notes/",
-        "cascade/validators/"
-    ]
-    for dir_path_str in explicit_dirs_from_ls:
-        all_dirs.add(dir_path_str.rstrip('/')) # Ensure no trailing slash for consistency
-
-    sorted_dirs = sorted(list(all_dirs)) # Sort to ensure parent dirs are created first
-
-    for dir_path_str in sorted_dirs:
+    for dir_path_str in required_dirs:
         dir_path = pathlib.Path(base_path) / pathlib.Path(dir_path_str)
         if not dir_path.exists():
-            print(f"Creating empty or parent directory: {dir_path}")
+            print(f"Creating directory: {dir_path}")
             dir_path.mkdir(parents=True, exist_ok=True)
+        elif not dir_path.is_dir():
+            print(f"Error: Expected directory but found file: {dir_path}")
+            # Optionally, raise an error or handle as needed
 
     print("Repository structure creation complete.")
 
 if __name__ == "__main__":
-    # The REPO_FILES dictionary will be populated below this script
-    # by subsequent tool calls. For now, it's empty.
-    # This is just the initial structure of the script.
-
-    REPO_FILES["README.md"] = """<!-- @meta {
-  "fileType": "permanent",
-  "purpose": "High-level overview and quickstart reference for the ContextCascade repository.",
+    # REPO_FILES is populated at the top of the script now.
+    create_repo_structure()
+# REPO_FILES["README.md"] = """<!-- @meta {
+#   "fileType": "permanent",
+#   "purpose": "High-level overview and quickstart reference for the ContextCascade repository.",
   "editPolicy": "appendOrReplace",
   "routeScope": "global"
 } -->
