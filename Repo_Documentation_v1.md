@@ -28,66 +28,126 @@ To begin using the ContextCascade system, ensure the following are met:
 - Recommended: Familiarity with loop-safe prompting and separation of read/act/write phases.
 - Recommended: Developer is able to provide the AI with consistent session-initiation prompts that include file path references.
 
-### 1.2 Initial Setup: Structure and Foundational Context
+### 1.2 Initial Setup: A Step-by-Step Guide for New Projects
 
-Setting up ContextCascade for a new project involves two main stages: creating the directory structure and then populating initial core context with AI assistance.
+Setting up ContextCascade for a new project involves two main phases:
+1.  Creating the necessary directory structure.
+2.  Populating the foundational `init_context.md` file with AI assistance and human approval.
 
-**A. Creating the Directory Structure:**
-The `create_repo.py` script can be used to generate the standard ContextCascade directory scaffold within your existing project:
-- Run: `python create_repo.py` (or `python3 create_repo.py`)
-- This script creates the `/cascade` directory and its subdirectories with placeholder files as defined in the ContextCascade specification.
-- Alternatively, you can manually create the directory structure based on Section 3.1 (Full Directory Tree).
+**Phase A: Creating the Directory Structure**
 
-**B. AI-Assisted Foundational Context Population:**
-Once the directory structure is in place, your first interaction with the AI assistant should focus on populating the critical `cascade/init_context.md` file.
-1.  **Provide High-Level Project Details:** Inform the AI about your project's name, primary goals, any core technology preferences, and the intended role of the AI.
-2.  **Instruct AI to Draft `init_context.md`:** Task the AI to take your high-level input and draft the content for `cascade/init_context.md` using its defined template (covering project mission, architectural principles, AI boundaries, core values).
-3.  **Review and Finalize:** Carefully review the AI-generated draft of `init_context.md`. Refine the content, fill in specific placeholders, and ensure it accurately reflects your project's immutable North-Star context. The AI can help with formatting and structure, but the strategic content requires human validation.
-4.  **Iterative Domain Documentation:** Subsequently, the AI can assist in drafting other key documents (e.g., `cascade/domains/<your-domain>/architecture.md`, `key_decisions.md`) based on discussions, analysis of existing code (if any), or specific requirements you provide. This is an ongoing, collaborative process.
+The `create_repo.py` script automates the creation of the standard ContextCascade directory scaffold:
+-   **Action:** Run `python create_repo.py` (or `python3 create_repo.py`) in your project's root directory.
+-   **Result:** This script creates the `/cascade` directory and all its subdirectories with the placeholder files as defined in the ContextCascade specification.
+-   **Alternative:** You can manually create the directory structure by following the layout described in Section 3.1 (Full Directory Tree).
 
-### 1.3 AI Session Initiation & Operational Prompt
-When starting a session with an AI assistant that will use the ContextCascade system, use a comprehensive prompt that ensures the AI loads and adheres to the system's protocols. The following is an ideal structure (refer to the "Most Perfect Prompt" discussion for the full template):
+**Phase B: Populating the Foundational `init_context.md` (Your First Interaction with the AI)**
 
-**Core Components of the Initiation Prompt:**
+This is a **critical first step** after the directory structure is in place. Your *very first interaction* with the AI assistant for this project should be dedicated to establishing the project's North Star in `cascade/init_context.md`.
 
-1.  **Mandatory Bootstrap Sequence:** Instruct the AI to read, in order:
-    *   `/cascade/00_BOOTSTRAP.md` (Absolute entry point and startup instructions)
-    *   `/cascade/index.md` (Master file map)
-    *   `/cascade/protocols/loop_protocol.md` (Detailed READ-ACT-WRITE cycle, including logging)
-    *   `/cascade/protocols/file_lifespans.md` (Context freshness and lifecycle rules)
-    *   `/cascade/init_context.md` (Project-specific immutable North-Star context)
-2.  **Ongoing Operational Requirements:** Remind the AI of its continuous duties:
-    *   Strict adherence to `loop_protocol.md` for all tasks.
-    *   Dynamic context loading via load plans.
-    *   Compliance with all file metadata (`@meta` blocks).
-    *   Mandatory job planning in `temp_job.md` before any writes.
-    *   Disciplined logging as per `loop_protocol.md`.
-    *   Adherence to safeguards (`safeguards.md`, `write_gates.md`).
-3.  **The Specific User Task:** Your actual request for the AI.
+**Step 1: Provide Project Details to the AI**
+   -   Clearly tell the AI about your project:
+        *   Project Name
+        *   Primary Goals/Mission
+        *   Core Technology Preferences (if any)
+        *   The intended role of the AI in this project.
+   -   **Example User Prompt for this step:**
+        ```
+        AI, I'm starting a new project called 'Awesome Web App'. The main goal is to create a platform for users to share and discover local events. We'll be using Python with FastAPI for the backend and React for the frontend. Your role will be to help me develop new features, write tests, and document the code.
 
-**Example Snippet (Conceptual - see full version elsewhere):**
+        Based on this, please help me draft the initial content for the `/cascade/init_context.md` file.
+        ```
+
+**Step 2: Instruct AI to Draft `init_context.md`**
+   -   Explicitly task the AI to take your high-level input and generate a draft for `cascade/init_context.md`. The AI should use the standard template for this file (covering project mission, architectural principles, AI boundaries, core values).
+
+**Step 3: Human Review and Finalization (Crucial!)**
+   -   **Carefully review** the AI-generated draft of `cascade/init_context.md`.
+   -   **Refine the content:** Fill in any placeholders (like `[Specify Project Name]`), correct any misunderstandings, and add specific details.
+   -   **Ensure accuracy:** This document becomes the **immutable North-Star context** for the project. Its content must be accurate and agreed upon.
+   -   **Human Validation is Key:** While the AI assists in drafting, the strategic content and final approval *must* come from you (the human user/developer). This file is marked `immutable` for a reason – to provide a stable, unchanging reference.
+
+**Step 4: (Optional) Iterative Domain Documentation**
+   -   Once `init_context.md` is finalized and accurately reflects your project's core, you can then ask the AI to help draft other key documents (e.g., `cascade/domains/<your-domain>/architecture.md`, `key_decisions.md`). This is an ongoing, collaborative process.
+
+**IMPORTANT NOTE:** After `init_context.md` is reviewed and finalized by you, it should generally **not be changed**. Its purpose is to be the unchanging foundation.
+
+### 1.3 AI Session Initiation & Operational Prompt (For ALL Subsequent Interactions)
+
+Once `init_context.md` has been created, reviewed, and finalized in your first interaction (as described in Phase B above), **ALL subsequent interactions** with the AI assistant must begin with the following comprehensive prompt structure. This ensures the AI is correctly initialized and operates according to the ContextCascade protocols.
+
+**The Standard Operational Prompt Structure:**
+
+Your prompt to the AI should always consist of these three parts, in order:
+
+1.  **Part 1: Mandatory Bootstrap & Context Ingestion**
+    *   Instruct the AI to read the following files in the exact order listed. This is non-negotiable for correct operation.
+        *   A. **Critical Read:** `/cascade/00_BOOTSTRAP.md` (This is the absolute entry point and contains startup instructions).
+        *   B. **Load Master Index:** `/cascade/index.md` (This is the master map of the `/cascade` directory).
+        *   C. **Internalize Operational Loop:** `/cascade/protocols/loop_protocol.md` (This defines the crucial READ-ACT-WRITE cycle).
+        *   D. **Understand Lifespan Policies:** `/cascade/protocols/file_lifespans.md` (These are rules for context freshness and when files should be re-read or managed).
+        *   E. **Internalize Immutable Project Context:** `/cascade/init_context.md` (This is your project-specific North-Star, which you finalized in Phase B).
+
+2.  **Part 2: Ongoing Operational Requirements**
+    *   Remind the AI of its continuous duties. These are essential for maintaining the integrity of the ContextCascade system.
+        *   Strict adherence to `/cascade/protocols/loop_protocol.md` for *all* tasks.
+        *   Dynamic context loading using load plans (as defined in the protocols).
+        *   Full compliance with all file metadata blocks (the `<!-- @meta {...} -->` headers).
+        *   Mandatory job planning in `/cascade/job_logs/temp_job.md` *before* any write operations.
+        *   Disciplined logging of changes and job outcomes as per `/cascade/protocols/loop_protocol.md`.
+        *   Adherence to all safeguards, including those in `/cascade/protocols/safeguards.md` and `/cascade/security/write_gates.md`.
+
+3.  **Part 3: Your Specific User Task**
+    *   Clearly state the actual task you want the AI to perform for this interaction.
+
+**Example of the Full Operational Prompt to Use (After `init_context.md` is finalized):**
+
 ```
+AI, please follow these instructions carefully for this session:
+
 === CONTEXTCASCADE SYSTEM INITIALIZATION & OPERATIONAL PROTOCOL ===
 
-MANDATORY AI INSTRUCTIONS - PROCESS STRICTLY IN ORDER:
+PART 1: MANDATORY BOOTSTRAP & CORE PROTOCOL INGESTION
+You MUST process the following files STRICTLY IN ORDER before addressing my task:
+A. Critical Read: `/cascade/00_BOOTSTRAP.md`
+B. Load Master Index: `/cascade/index.md`
+C. Internalize Operational Loop: `/cascade/protocols/loop_protocol.md`
+D. Understand Lifespan Policies: `/cascade/protocols/file_lifespans.md`
+E. Internalize Immutable Project Context: `/cascade/init_context.md`
 
-1.  BOOTSTRAP & CORE PROTOCOL INGESTION:
-    A. Critical Read: `/cascade/00_BOOTSTRAP.md`
-    B. Load Master Index: `/cascade/index.md`
-    C. Internalize Operational Loop: `/cascade/protocols/loop_protocol.md`
-    D. Understand Lifespan Policies: `/cascade/protocols/file_lifespans.md`
-    E. Internalize Immutable Project Context: `/cascade/init_context.md`
+PART 2: ONGOING OPERATIONAL REQUIREMENTS
+For this task and ALL subsequent tasks, you MUST adhere to the following:
+*   Strict Adherence to `/cascade/protocols/loop_protocol.md` (READ-ACT-WRITE cycle).
+*   Utilize dynamic contextual loading via Load Plans as appropriate.
+*   Comply with all file metadata (`@meta` blocks), including `editPolicy`.
+*   Generate a job plan in `/cascade/job_logs/temp_job.md` BEFORE any file modifications.
+*   Perform disciplined logging as detailed in `/cascade/protocols/loop_protocol.md`.
+*   Adhere to all system safeguards, including those in `/cascade/protocols/safeguards.md` and `/cascade/security/write_gates.md`.
 
-2.  ONGOING OPERATIONAL REQUIREMENTS:
-    *   Strict Adherence to `loop_protocol.md`...
-    *   Contextual Loading via Load Plans...
-    *   (etc.) ...
-
-3.  CURRENT TASK:
-    *   {INSERT USER PROMPT HERE}
+PART 3: CURRENT TASK
+*   {INSERT YOUR ACTUAL TASK FOR THE AI HERE. For example: "Please help me create a new Python function in the 'utils' module that calculates the factorial of a number. Include a docstring and a unit test."}
 
 === END OF CONTEXTCASCADE SYSTEM INITIALIZATION & OPERATIONAL PROTOCOL ===
 ```
+
+**Simplified Invocation (Example):**
+
+While the full prompt above is ideal for clarity and ensuring AI compliance, you might use a more concise version if the AI reliably understands the ContextCascade system after initial sessions. However, **always ensure the core bootstrap files are mentioned explicitly.**
+
+A shorter, but still effective, prompt for Replit AI (or similar environments) after `init_context.md` is set up:
+```
+1) IMPORTANT: Initiate ContextCascade. Read:
+   - `/cascade/00_BOOTSTRAP.md` (then follow its instructions for `index.md`, `loop_protocol.md`, etc.)
+   - Ensure you also load and internalize `/cascade/init_context.md`.
+   Adhere to ALL ongoing operational requirements from the loop protocol: planning in `temp_job.md`, metadata compliance, logging, etc.
+
+2) My task is: {INSERT USER PROMPT HERE}
+```
+
+**Key Takeaway:**
+-   The **first interaction** is special: focus it on creating and finalizing `init_context.md`.
+-   **All other interactions** must start with the full bootstrap sequence that now *includes* reading your finalized `init_context.md`.
+
 This detailed prompt structure is crucial for ensuring the AI operates correctly within the ContextCascade framework. For new projects, the very first "CURRENT TASK" might be to populate `init_context.md` as described in Section 1.2.B.
 Use the following prompt to initialize a Replit AI session using the ContextCascade system:
 ```
