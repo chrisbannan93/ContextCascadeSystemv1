@@ -106,7 +106,7 @@ Your prompt to the AI should always consist of these three parts, in order:
 AI, please follow these instructions carefully for this session:
 
 === CONTEXTCASCADE SYSTEM INITIALIZATION & OPERATIONAL PROTOCOL ===
-
+IMPORTANT, COMPLETE ALL OF THESE IN FULL
 PART 1: MANDATORY BOOTSTRAP & CORE PROTOCOL INGESTION
 You MUST process the following files STRICTLY IN ORDER before addressing my task:
 A. Critical Read: `/cascade/00_BOOTSTRAP.md`
